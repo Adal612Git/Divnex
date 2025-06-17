@@ -35,6 +35,8 @@ class Project {
 const App = {
   data: { projects: [] },
   currentView: 'list',
+  currentProject: null,
+  contextTask: null,
   load() {
     const saved = localStorage.getItem('divnexData');
     if (saved) {
@@ -52,6 +54,7 @@ const App = {
       ];
       this.save();
     }
+    if (this.data.projects.length) this.currentProject = this.data.projects[0];
   },
   save() {
     localStorage.setItem('divnexData', JSON.stringify({ projects: this.data.projects.map(p => p.toJSON()) }));
@@ -81,7 +84,10 @@ const App = {
   },
   renderList(container, project) {
     project.tasks.forEach(task => {
-      container.appendChild(createTaskRow(task));
+      container.appendChild(createTaskRow(task, {
+        onClick: (_e, t) => this.editTask(t),
+        onContext: (e, t) => this.showContextMenu(e, t)
+      }));
     });
   },
   renderKanban(container, project) {
@@ -91,11 +97,41 @@ const App = {
     statuses.forEach(status => {
       const { column, list } = createKanbanColumn(status);
       project.tasks.filter(t => t.status === status).forEach(t => {
-        list.appendChild(createTaskCard(t));
+        list.appendChild(createTaskCard(t, {
+          onClick: (_e, task) => this.editTask(task),
+          onContext: (e, task) => this.showContextMenu(e, task)
+        }));
       });
       board.appendChild(column);
     });
     container.appendChild(board);
+  },
+  editTask(task) {
+    const title = prompt('Editar título', task.title);
+    if (title) {
+      task.title = title;
+      this.save();
+      this.renderView();
+    }
+  },
+  showContextMenu(e, task) {
+    e.preventDefault();
+    this.contextTask = task;
+    const menu = document.getElementById('contextMenu');
+    menu.style.left = `${e.pageX}px`;
+    menu.style.top = `${e.pageY}px`;
+    menu.classList.remove('hidden');
+  },
+  hideContextMenu() {
+    document.getElementById('contextMenu').classList.add('hidden');
+  },
+  deleteTask() {
+    if (!this.contextTask || !this.currentProject) return;
+    this.currentProject.tasks = this.currentProject.tasks.filter(t => t !== this.contextTask);
+    this.contextTask = null;
+    this.save();
+    this.renderView();
+    this.hideContextMenu();
   },
   addProject() {
     const name = prompt('Nombre del proyecto');
@@ -141,4 +177,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const file = e.target.files[0];
     if (file) App.importJSON(file);
   };
+  document.getElementById('editTask').onclick = () => {
+    if (App.contextTask) App.editTask(App.contextTask);
+    App.hideContextMenu();
+  };
+  document.getElementById('deleteTask').onclick = () => App.deleteTask();
+  document.addEventListener('click', e => {
+    const menu = document.getElementById('contextMenu');
+    if (!menu.contains(e.target)) App.hideContextMenu();
+  });
+  document.addEventListener('contextmenu', e => {
+    const menu = document.getElementById('contextMenu');
+    if (!menu.contains(e.target)) App.hideContextMenu();
+  });
 });

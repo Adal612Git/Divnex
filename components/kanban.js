@@ -22,10 +22,12 @@ export function createKanbanColumn(title) {
   return { column, list };
 }
 
-export function createTaskCard(task) {
+export function createTaskCard(task, handlers = {}) {
   const card = document.createElement('div');
-  card.className = 'bg-white rounded-lg shadow p-3 text-sm';
+  card.className = 'bg-white rounded-lg shadow p-3 text-sm cursor-pointer';
   card.style.borderLeft = `4px solid ${statusColor(task.status)}`;
   card.textContent = task.title;
+  if (handlers.onClick) card.addEventListener('click', e => handlers.onClick(e, task));
+  if (handlers.onContext) card.addEventListener('contextmenu', e => handlers.onContext(e, task));
   return card;
 }
