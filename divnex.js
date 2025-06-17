@@ -1,4 +1,5 @@
 import { createKanbanColumn, createTaskCard } from "./components/kanban.js";
+import { createTaskRow } from "./components/task.js";
 class Task {
   constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1 }) {
     this.id = id || Date.now();
@@ -60,6 +61,7 @@ const App = {
     list.innerHTML = '';
     this.data.projects.forEach(p => {
       const li = document.createElement('li');
+      li.className = 'cursor-pointer px-2 py-1 rounded hover:bg-gray-100';
       li.textContent = p.name;
       li.onclick = () => { this.currentProject = p; this.renderView(); };
       list.appendChild(li);
@@ -79,15 +81,12 @@ const App = {
   },
   renderList(container, project) {
     project.tasks.forEach(task => {
-      const row = document.createElement('div');
-      row.className = 'task-row';
-      row.textContent = `${task.title} - ${task.status}`;
-      container.appendChild(row);
+      container.appendChild(createTaskRow(task));
     });
   },
   renderKanban(container, project) {
     const board = document.createElement('div');
-    board.className = 'kanban-board';
+    board.className = 'flex gap-4';
     const statuses = ['To Do', 'In Progress', 'Done'];
     statuses.forEach(status => {
       const { column, list } = createKanbanColumn(status);
