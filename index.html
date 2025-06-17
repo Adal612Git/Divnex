@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Divnex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { inter: ['Inter', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="font-inter bg-gray-50 h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-semibold">Divnex</h1>
+    <nav class="space-x-2">
+      <button data-view="list" class="view-btn px-3 py-1 rounded-md hover:bg-white/20">Lista</button>
+      <button data-view="kanban" class="view-btn px-3 py-1 rounded-md hover:bg-white/20">Kanban</button>
+      <button data-view="calendar" class="view-btn px-3 py-1 rounded-md hover:bg-white/20">Calendario</button>
+      <button id="exportBtn" class="ml-3 px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Exportar</button>
+      <button id="importBtn" class="px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Importar</button>
+      <input type="file" id="importFile" class="hidden" />
+    </nav>
+  </header>
+  <div id="container" class="flex flex-1 overflow-hidden">
+    <aside id="sidebar" class="w-64 bg-white border-r p-4 overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold">Proyectos</h2>
+        <button id="addProjectBtn" class="text-indigo-600 hover:text-indigo-800">+</button>
+      </div>
+      <ul id="projectList" class="space-y-2"></ul>
+    </aside>
+    <main id="mainView" class="flex-1 p-4 overflow-y-auto"></main>
+  </div>
+  <div id="contextMenu" class="absolute bg-white rounded-md shadow text-sm py-1 hidden z-50">
+    <button id="editTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100">Editar</button>
+    <button id="deleteTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100">Eliminar</button>
+  </div>
+  <script type="module" src="divnex.js"></script>
+</body>
+</html>
