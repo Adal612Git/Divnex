@@ -14,9 +14,20 @@ export function createTaskRow(task, handlers = {}) {
   }
   title.textContent = text;
   const status = document.createElement('span');
-  status.className = 'text-gray-500';
-  status.textContent = task.status;
-  if (task.dueDate) status.textContent += ` - ${task.dueDate}`;
+  status.className = 'text-gray-500 flex items-center space-x-2';
+  const stText = document.createElement('span');
+  stText.textContent = task.status;
+  status.appendChild(stText);
+  if (task.dueDate) {
+    const due = document.createElement('span');
+    due.textContent = `📅 ${task.dueDate}`;
+    status.appendChild(due);
+  }
+  if (task.attachments && task.attachments.length) {
+    const att = document.createElement('span');
+    att.textContent = `📎 ${task.attachments.length}`;
+    status.appendChild(att);
+  }
   row.appendChild(title);
   row.appendChild(status);
   if (handlers.onClick) row.addEventListener('click', e => handlers.onClick(e, task));

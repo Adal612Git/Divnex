@@ -24,26 +24,42 @@ export function createKanbanColumn(title) {
 
 export function createTaskCard(task, handlers = {}) {
   const card = document.createElement('div');
-  card.className = 'relative bg-white rounded-lg shadow p-3 text-sm cursor-pointer select-none';
+  card.className = 'relative bg-white rounded-lg shadow p-4 text-sm cursor-pointer select-none min-h-[96px] flex flex-col justify-between';
   card.draggable = true;
   card.dataset.id = task.id;
   card.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;
   const title = document.createElement('div');
   title.textContent = task.title;
   card.appendChild(title);
+  const info = document.createElement('div');
+  info.className = 'flex justify-between items-center mt-2 text-xs text-gray-500';
+  const left = document.createElement('div');
   if (task.dueDate) {
-    const due = document.createElement('div');
-    due.className = 'text-xs text-gray-500';
-    due.textContent = task.dueDate;
-    card.appendChild(due);
+    const due = document.createElement('span');
+    due.className = 'mr-2 cursor-pointer';
+    due.textContent = `📅 ${task.dueDate}`;
+    if (handlers.onEdit) due.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
+    left.appendChild(due);
+  }
+  if (task.attachments && task.attachments.length) {
+    const att = document.createElement('span');
+    att.className = 'mr-2';
+    att.textContent = `📎 ${task.attachments.length}`;
+    left.appendChild(att);
   }
   if (task.subtasks && task.subtasks.length) {
-    const progress = document.createElement('div');
     const done = task.subtasks.filter(s => s.done).length;
-    progress.className = 'text-xs text-gray-500';
-    progress.textContent = `${done}/${task.subtasks.length}`;
-    card.appendChild(progress);
+    const progress = document.createElement('span');
+    progress.textContent = `☑️ ${done}/${task.subtasks.length}`;
+    left.appendChild(progress);
   }
+  info.appendChild(left);
+  const add = document.createElement('span');
+  add.className = 'ml-auto cursor-pointer';
+  add.textContent = '➕';
+  if (handlers.onEdit) add.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
+  info.appendChild(add);
+  card.appendChild(info);
   if (handlers.onClick) card.addEventListener('click', e => handlers.onClick(e, task));
   if (handlers.onContext) card.addEventListener('contextmenu', e => handlers.onContext(e, task));
   if (handlers.onDragStart) card.addEventListener('dragstart', e => handlers.onDragStart(e, task));

@@ -1,7 +1,7 @@
 import { createKanbanColumn, createTaskCard } from "./components/kanban.js";
 import { createTaskRow } from "./components/task.js";
 class Task {
-  constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1, color = '', dueDate = '', subtasks = [] }) {
+  constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1, color = '', dueDate = '', attachments = [], subtasks = [] }) {
     this.id = id || Date.now();
     this.title = title;
     this.description = description;
@@ -11,6 +11,7 @@ class Task {
     this.estimate = estimate;
     this.color = color;
     this.dueDate = dueDate;
+    this.attachments = attachments;
     this.subtasks = subtasks.map(s => ({ id: s.id || Date.now(), title: s.title, done: !!s.done }));
   }
   toJSON() {
@@ -24,6 +25,7 @@ class Task {
       estimate: this.estimate,
       color: this.color,
       dueDate: this.dueDate,
+      attachments: this.attachments,
       subtasks: this.subtasks
     };
   }
@@ -53,6 +55,7 @@ const App = {
   contextTask: null,
   modalTask: null,
   modalSubtasks: [],
+  modalAttachments: [],
   draggedTask: null,
   calendarMonth: new Date(),
   load() {
@@ -242,7 +245,7 @@ const App = {
       label.textContent = d;
       cell.appendChild(label);
       const dateStr = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      project.tasks.filter(t => t.dueDate === dateStr).forEach(t => {
+      project.tasks.filter(t => t.dueDate && t.dueDate.startsWith(dateStr)).forEach(t => {
         const div = document.createElement('div');
         div.className = 'text-xs truncate rounded bg-white shadow px-1 my-1';
         div.style.borderLeft = `3px solid ${t.color || '#94a3b8'}`;
@@ -268,12 +271,15 @@ const App = {
     document.getElementById('taskDueDate').value = task ? (task.dueDate || '') : '';
     document.getElementById('taskColor').value = task && task.color ? task.color : '#94a3b8';
     this.modalSubtasks = task ? task.subtasks.map(s => ({ ...s })) : [];
+    this.modalAttachments = task ? task.attachments.slice() : [];
+    document.getElementById('taskAttachments').value = '';
     this.renderSubtasks();
     document.getElementById('taskModal').classList.remove('hidden');
   },
   closeTaskModal() {
     document.getElementById('taskModal').classList.add('hidden');
     this.modalTask = null;
+    this.modalAttachments = [];
   },
   renderSubtasks() {
     const list = document.getElementById('subtaskList');
@@ -304,14 +310,16 @@ const App = {
     const status = document.getElementById('taskStatus').value;
     const dueDate = document.getElementById('taskDueDate').value;
     const color = document.getElementById('taskColor').value;
+    const attachments = this.modalAttachments;
     if (this.modalTask) {
       this.modalTask.title = title;
       this.modalTask.status = status;
       this.modalTask.dueDate = dueDate;
       this.modalTask.color = color;
       this.modalTask.subtasks = this.modalSubtasks;
+      this.modalTask.attachments = attachments;
     } else {
-      const task = new Task({ title, status, color, dueDate, subtasks: this.modalSubtasks });
+      const task = new Task({ title, status, color, dueDate, attachments, subtasks: this.modalSubtasks });
       this.currentProject.tasks.push(task);
     }
     this.save();
@@ -460,6 +468,16 @@ document.addEventListener('DOMContentLoaded', () => {
       input.value = '';
       App.renderSubtasks();
     }
+  };
+  document.getElementById('taskAttachments').onchange = e => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        App.modalAttachments.push({ name: file.name, data: ev.target.result });
+      };
+      reader.readAsDataURL(file);
+    });
   };
   document.getElementById('taskModal').addEventListener('click', e => {
     if (e.target.id === 'taskModal') App.closeTaskModal();
