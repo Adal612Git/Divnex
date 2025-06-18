@@ -51,6 +51,7 @@ const App = {
   contextTask: null,
   modalTask: null,
   modalSubtasks: [],
+  draggedTask: null,
   load() {
     const saved = localStorage.getItem('divnexData');
     if (saved) {
@@ -100,9 +101,19 @@ const App = {
     project.tasks.forEach(task => {
       container.appendChild(createTaskRow(task, {
         onClick: (_e, t) => this.editTask(t),
-        onContext: (e, t) => this.showContextMenu(e, t)
+        onContext: (e, t) => this.showContextMenu(e, t),
+        onDragStart: (_e, t) => this.startDrag(t),
+        onDragOver: e => e.preventDefault(),
+        onDrop: (_e, t) => {
+          const idx = project.tasks.findIndex(x => x.id === t.id);
+          this.dropList(idx);
+        }
       }));
     });
+    container.ondragover = e => e.preventDefault();
+    container.ondrop = e => {
+      if (e.target === container) this.dropList(-1);
+    };
   },
   renderKanban(container, project) {
     const board = document.createElement('div');
@@ -110,10 +121,13 @@ const App = {
     const statuses = ['To Do', 'In Progress', 'Done'];
     statuses.forEach(status => {
       const { column, list } = createKanbanColumn(status);
+      list.ondragover = e => e.preventDefault();
+      list.ondrop = () => this.dropKanban(status);
       project.tasks.filter(t => t.status === status).forEach(t => {
         list.appendChild(createTaskCard(t, {
           onClick: (_e, task) => this.editTask(task),
-          onContext: (e, task) => this.showContextMenu(e, task)
+          onContext: (e, task) => this.showContextMenu(e, task),
+          onDragStart: (_e, task) => this.startDrag(task)
         }));
       });
       board.appendChild(column);
@@ -228,6 +242,37 @@ const App = {
       this.renderView();
     };
     reader.readAsText(file);
+  },
+  startDrag(task) {
+    this.draggedTask = task;
+  },
+  dropKanban(status) {
+    if (!this.draggedTask || !this.currentProject) return;
+    const idx = this.currentProject.tasks.findIndex(t => t.id === this.draggedTask.id);
+    if (idx !== -1) {
+      this.currentProject.tasks[idx].status = status;
+      const [t] = this.currentProject.tasks.splice(idx, 1);
+      this.currentProject.tasks.push(t);
+      this.save();
+      this.renderView();
+    }
+    this.draggedTask = null;
+  },
+  dropList(index) {
+    if (!this.draggedTask || !this.currentProject) return;
+    const arr = this.currentProject.tasks;
+    const from = arr.findIndex(t => t.id === this.draggedTask.id);
+    if (from === -1) return;
+    const [task] = arr.splice(from, 1);
+    if (index < 0 || index >= arr.length) {
+      arr.push(task);
+    } else {
+      if (from < index) index--;
+      arr.splice(index, 0, task);
+    }
+    this.save();
+    this.renderView();
+    this.draggedTask = null;
   }
 };
 
@@ -272,4 +317,5 @@ document.addEventListener('DOMContentLoaded', () => {
     const menu = document.getElementById('contextMenu');
     if (!menu.contains(e.target)) App.hideContextMenu();
   });
+  document.addEventListener('dragend', () => { App.draggedTask = null; });
 });
