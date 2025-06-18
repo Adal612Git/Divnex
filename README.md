@@ -13,9 +13,15 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
 ## Estructura
 
 - `index.html` – Entrada principal de la aplicación.
-- `divnex.js` – Lógica y modelos de datos.
+- `divnex.js` – Lógica, modelos de datos y almacenamiento.
 - `components/` – Componentes reutilizables como columnas Kanban y tarjetas.
 - `styles/` – Estilos básicos.
 - `templates/` – Plantillas de proyectos y tareas.
+
+## Novedades
+
+- Las tareas permiten especificar fecha y hora de vencimiento.
+- Los adjuntos se almacenan directamente en el proyecto para consultarlos luego.
+- Las tareas con fecha se muestran en el calendario de forma automática.
 
 La aplicación incluye datos de ejemplo la primera vez que se abre para mostrar el funcionamiento básico.

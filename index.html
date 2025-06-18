@@ -53,9 +53,12 @@
         <option value="In Progress">In Progress</option>
         <option value="Done">Done</option>
       </select>
-      <input id="taskDueDate" type="date" class="w-full border rounded p-2" />
+      <input id="taskDueDate" type="datetime-local" class="w-full border rounded p-2" />
       <label class="block text-sm">Color
         <input id="taskColor" type="color" class="ml-2" />
+      </label>
+      <label class="block text-sm">Adjuntos
+        <input id="taskAttachments" type="file" multiple class="w-full border rounded p-2 mt-1" />
       </label>
       <div>
         <div class="flex mb-1">
