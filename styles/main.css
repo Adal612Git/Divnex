@@ -1,6 +1,18 @@
 body {
   margin: 0;
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', 'system-ui', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  transition: background 0.3s, color 0.3s;
+}
+
+.select-none {
+  user-select: none;
+}
+
+.pointer-events-none {
+  pointer-events: none;
 }
 .select-none { user-select: none; }
 .pointer-events-none { pointer-events: none; }
@@ -9,6 +21,8 @@ body {
   border: 2px dashed #6366f1;
   transition: background-color 0.2s, border-color 0.2s;
 }
+
+
 .kanban-column {
   background-color: #ffffff;
   border-radius: 0.75rem;
