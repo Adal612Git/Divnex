@@ -1,8 +1,4 @@
-# Divnex
-
-Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Monday. Todo corre directamente en el navegador sin necesidad de backend ni bases de datos externas.
-
-## Uso
+@@ -6,25 +6,33 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
 
 1. Clona este repositorio o descarga los archivos.
 2. Abre `index.html` en tu navegador preferido.
