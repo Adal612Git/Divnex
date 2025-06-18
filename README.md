@@ -28,3 +28,11 @@ La aplicación incluye datos de ejemplo la primera vez que se abre para mostrar 
 ## Temas
 
 Puedes cambiar entre el tema claro y uno inspirado en VS Code desde el menú superior. El ajuste se guarda en `localStorage`.
+
+## Estilo y personalización
+
+Divnex utiliza **Tailwind CSS**. Los estilos comunes se definen en `styles/components.css` y el archivo `tailwind.config.js` habilita el modo oscuro por clase.
+
+- Para modificar colores o fuentes edita `tailwind.config.js`.
+- Puedes agregar más botones reutilizando las clases `btn`, `btn-primary`, `btn-outline` o `btn-danger`.
+- El modo claro/oscuro se cambia con el botón de sol/luna en el encabezado y se recuerda usando `localStorage`.

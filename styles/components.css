@@ -1,0 +1,29 @@
+@layer components {
+  .btn {
+    @apply px-3 py-1 rounded-md font-medium transition-colors duration-200;
+  }
+  .btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800;
+  }
+  .btn-outline {
+    @apply border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700;
+  }
+  .btn-danger {
+    @apply bg-red-500 text-white hover:bg-red-600 active:bg-red-700;
+  }
+  .modal {
+    @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity;
+  }
+  .modal-content {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-full max-w-3xl mx-auto;
+  }
+  .task-card {
+    @apply bg-white dark:bg-[#1e1e1e] rounded-lg shadow-md p-4 mb-3 transition-transform transition-shadow;
+  }
+  .task-card:hover {
+    @apply shadow-lg -translate-y-1;
+  }
+  .input-group {
+    @apply w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500;
+  }
+}

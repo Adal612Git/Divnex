@@ -69,14 +69,14 @@ export function createTaskCard(task, handlers = {}) {
     if (handlers.onEdit) {
       const edit = document.createElement('button');
       edit.textContent = '✎';
-      edit.className = 'text-blue-500';
+      edit.className = 'btn btn-outline text-blue-500 px-1';
       edit.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
       actions.appendChild(edit);
     }
     if (handlers.onDelete) {
       const del = document.createElement('button');
       del.textContent = '✕';
-      del.className = 'text-red-500';
+      del.className = 'btn btn-outline text-red-500 px-1';
       del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
       actions.appendChild(del);
     }

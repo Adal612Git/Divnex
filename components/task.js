@@ -2,7 +2,7 @@ import { statusColor } from './kanban.js';
 
 export function createTaskRow(task, handlers = {}) {
   const row = document.createElement('div');
-  row.className = 'relative bg-white rounded-md shadow p-3 mb-2 flex justify-between items-center text-sm cursor-pointer select-none';
+  row.className = 'task-card relative flex justify-between items-center text-sm cursor-pointer select-none';
   row.draggable = true;
   row.dataset.id = task.id;
   row.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;
@@ -41,14 +41,14 @@ export function createTaskRow(task, handlers = {}) {
     if (handlers.onEdit) {
       const edit = document.createElement('button');
       edit.textContent = '✎';
-      edit.className = 'text-blue-500';
+      edit.className = 'btn btn-outline text-blue-500 px-1';
       edit.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
       actions.appendChild(edit);
     }
     if (handlers.onDelete) {
       const del = document.createElement('button');
       del.textContent = '✕';
-      del.className = 'text-red-500';
+      del.className = 'btn btn-outline text-red-500 px-1';
       del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
       actions.appendChild(del);
     }
