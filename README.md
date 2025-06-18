@@ -1,8 +1,4 @@
-# Divnex
-
-Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Monday. Todo corre directamente en el navegador sin necesidad de backend ni bases de datos externas.
-
-## Uso
+@@ -6,25 +6,33 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
 
 1. Clona este repositorio o descarga los archivos.
 2. Abre `index.html` en tu navegador preferido.
@@ -25,18 +21,14 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
 - Las tareas con fecha se muestran en el calendario de forma automática.
 
 La aplicación incluye datos de ejemplo la primera vez que se abre para mostrar el funcionamiento básico.
-
-## Estilo
-
-Divnex usa Tailwind CSS con soporte de tema oscuro. Los estilos comunes se agrupan en `styles/components.css` y puedes personalizar colores o agregar nuevos botones editando dicho archivo. Para cambiar el modo claro/oscuro existe un botón con ícono de sol o luna en la esquina superior derecha que guarda la preferencia en `localStorage`.
 ## Temas
 
 Puedes cambiar entre el tema claro y uno inspirado en VS Code desde el menú superior. El ajuste se guarda en `localStorage`.
 
 ## Estilo y personalización
 
-Divnex utiliza **Tailwind CSS** con soporte para modo oscuro mediante la clase `dark`.
-Los componentes reutilizan clases definidas en `styles/tailwind.css` como `btn`, `btn-primary` y `task-card`.
-Puedes modificar colores o añadir variantes editando ese archivo o extendiendo `tailwind.config` en el bloque de configuración incluido en `index.html`.
+Divnex utiliza **Tailwind CSS**. Los estilos comunes se definen en `styles/components.css` y el archivo `tailwind.config.js` habilita el modo oscuro por clase.
 
-Para agregar más botones o ajustar animaciones, simplemente aplica las clases utilitarias de Tailwind o crea nuevas reglas dentro de `styles/tailwind.css`.
+- Para modificar colores o fuentes edita `tailwind.config.js`.
+- Puedes agregar más botones reutilizando las clases `btn`, `btn-primary`, `btn-outline` o `btn-danger`.
+- El modo claro/oscuro se cambia con el botón de sol/luna en el encabezado y se recuerda usando `localStorage`.

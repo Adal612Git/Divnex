@@ -19,13 +19,13 @@
       }
     };
   </script>
+  <link href="styles/components.css" rel="stylesheet" type="text/tailwindcss" />
   <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="styles/components.css" type="text/tailwindcss">
   <link id="themeStylesheet" rel="stylesheet" href="styles/theme-vscode.css" disabled>
 </head>
 <body class="font-inter h-screen flex flex-col">
   <header class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white p-4 flex justify-between items-center">
-<body class="font-sans h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<body class="font-sans h-screen flex flex-col bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
   <header class="bg-gradient-to-r from-indigo-700 to-indigo-900 text-white p-4 flex justify-between items-center">
     <h1 class="text-xl font-semibold">Divnex</h1>
     <nav class="space-x-2">
@@ -35,16 +35,23 @@
       <button id="exportBtn" class="ml-3 px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Exportar</button>
       <button id="importBtn" class="px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Importar</button>
       <button id="addTaskBtn" class="ml-3 px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Nueva Tarea</button>
+      <button data-view="list" class="view-btn btn btn-outline">Lista</button>
+      <button data-view="kanban" class="view-btn btn btn-outline">Kanban</button>
+      <button data-view="calendar" class="view-btn btn btn-outline">Calendario</button>
+      <button id="exportBtn" class="btn btn-outline ml-3">Exportar</button>
+      <button id="importBtn" class="btn btn-outline">Importar</button>
+      <button id="addTaskBtn" class="btn btn-primary ml-3">Nueva Tarea</button>
       <input type="file" id="importFile" class="hidden" />
       <select id="themeSelect" class="ml-3 px-2 py-1 rounded-md bg-white/20 text-white">
         <option value="light">Claro</option>
         <option value="vscode">VS Code</option>
       </select>
-      <button id="darkToggle" class="ml-3 px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">🌙</button>
+      <button id="themeToggle" class="btn btn-outline ml-2" title="Tema claro/oscuro">🌙</button>
     </nav>
   </header>
   <div id="container" class="flex flex-1 overflow-hidden">
     <aside id="sidebar" class="w-64 bg-white border-r p-4 overflow-y-auto">
+    <aside id="sidebar" class="w-64 bg-gray-100 dark:bg-gray-900 border-r dark:border-gray-700 p-4 overflow-y-auto">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold">Proyectos</h2>
         <button id="addProjectBtn" class="text-indigo-600 hover:text-indigo-800">+</button>
@@ -56,49 +63,47 @@
   <div id="contextMenu" class="absolute bg-white rounded-md shadow text-sm py-1 hidden z-50">
     <button id="editTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100">Editar</button>
     <button id="deleteTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100">Eliminar</button>
+  <div id="contextMenu" class="absolute bg-white dark:bg-gray-800 rounded-md shadow text-sm py-1 hidden z-50">
+    <button id="editTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-700">Editar</button>
+    <button id="deleteTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-700">Eliminar</button>
   </div>
   <div id="taskModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
     <div class="bg-gray-100 rounded-lg w-[800px]">
-    <div class="modal">
+  <div id="taskModal" class="modal hidden">
+    <div class="modal-content">
       <div id="headerPreview" class="h-24 rounded-t-lg bg-gray-200 bg-cover bg-center relative">
         <input id="headerColor" type="color" class="absolute bottom-2 left-2" />
         <input id="headerImage" type="file" accept="image/*" class="absolute bottom-2 left-20" />
       </div>
       <div class="p-4 flex space-x-4">
-      <div class="p-6 flex space-x-4">
         <div class="flex-1 space-y-2">
+      <div class="p-6 flex space-x-6">
+        <div class="flex-1 space-y-3">
           <h3 id="taskModalTitle" class="text-lg font-semibold">Nueva Tarea</h3>
           <input id="taskTitle" type="text" class="w-full border rounded p-2" placeholder="Título" />
           <textarea id="taskDescription" class="w-full border rounded p-2" rows="3" placeholder="Descripción"></textarea>
           <select id="taskStatus" class="w-full border rounded p-2">
-          <div class="input-group">
-            <input id="taskTitle" type="text" placeholder="Título" />
-          </div>
-          <div class="input-group">
-            <textarea id="taskDescription" rows="3" placeholder="Descripción"></textarea>
-          </div>
-          <div class="input-group">
-            <select id="taskStatus">
+          <input id="taskTitle" type="text" class="input-group" placeholder="Título" />
+          <textarea id="taskDescription" class="input-group" rows="3" placeholder="Descripción"></textarea>
+          <select id="taskStatus" class="input-group">
             <option value="To Do">To Do</option>
             <option value="In Progress">In Progress</option>
             <option value="Done">Done</option>
           </select>
           <input id="taskDueDate" type="datetime-local" class="w-full border rounded p-2" />
-          </div>
-          <div class="input-group">
-            <input id="taskDueDate" type="datetime-local" />
-          </div>
+          <input id="taskDueDate" type="datetime-local" class="input-group" />
           <label class="block text-sm">Color
             <input id="taskColor" type="color" class="ml-2" />
           </label>
           <label class="block text-sm">Adjuntos
             <input id="taskAttachments" type="file" multiple class="w-full border rounded p-2 mt-1" />
-            <input id="taskAttachments" type="file" multiple class="input-group mt-1" />
+            <input id="taskAttachments" type="file" multiple class="w-full mt-1" />
           </label>
           <div>
             <div class="flex mb-1">
               <input id="subtaskInput" type="text" class="flex-1 border rounded-l p-2" placeholder="Subtarea" />
               <button id="addSubtaskBtn" class="border rounded-r px-2 bg-gray-100">+</button>
+              <input id="subtaskInput" type="text" class="flex-1 input-group rounded-r-none" placeholder="Subtarea" />
               <button id="addSubtaskBtn" class="btn btn-outline rounded-l-none">+</button>
             </div>
             <ul id="subtaskList" class="space-y-1 max-h-32 overflow-y-auto"></ul>
@@ -109,10 +114,8 @@
           <textarea id="noteText" class="w-full border rounded p-1" rows="3" placeholder="Escribe una nota"></textarea>
           <input id="noteImages" type="file" accept="image/*" multiple class="w-full border rounded p-1" />
           <button id="addNoteBtn" class="px-2 py-1 bg-indigo-500 text-white rounded w-full">Agregar Nota</button>
-          <div class="input-group">
-            <textarea id="noteText" rows="3" placeholder="Escribe una nota"></textarea>
-          </div>
-          <input id="noteImages" type="file" accept="image/*" multiple class="input-group" />
+          <textarea id="noteText" class="input-group" rows="3" placeholder="Escribe una nota"></textarea>
+          <input id="noteImages" type="file" accept="image/*" multiple class="w-full mt-1" />
           <button id="addNoteBtn" class="btn btn-primary w-full">Agregar Nota</button>
           <ul id="noteList" class="space-y-1 max-h-40 overflow-y-auto"></ul>
         </div>
@@ -120,7 +123,7 @@
       <div class="p-4 flex justify-end space-x-2 border-t bg-gray-100 rounded-b-lg">
         <button id="cancelTaskBtn" class="px-3 py-1 rounded bg-gray-200">Cancelar</button>
         <button id="saveTaskBtn" class="px-3 py-1 rounded bg-indigo-500 text-white">Guardar</button>
-      <div class="p-4 flex justify-end space-x-2 border-t bg-gray-50 dark:bg-gray-700 rounded-b-lg">
+      <div class="p-4 flex justify-end space-x-2 border-t bg-gray-100 dark:bg-gray-900 rounded-b-lg">
         <button id="cancelTaskBtn" class="btn btn-outline">Cancelar</button>
         <button id="saveTaskBtn" class="btn btn-primary">Guardar</button>
       </div>
@@ -134,19 +137,25 @@
     const savedTheme = localStorage.getItem('theme') || 'light';
     themeSelect.value = savedTheme;
     if (savedTheme === 'vscode') themeLink.disabled = false;
+    const themeToggle = document.getElementById('themeToggle');
+
+    const savedTheme = localStorage.getItem('themeMode') || 'light';
+    if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+    themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+    const savedCustom = localStorage.getItem('theme') || 'light';
+    themeSelect.value = savedCustom;
+    if (savedCustom === 'vscode') themeLink.disabled = false;
     themeSelect.addEventListener('change', () => {
       const val = themeSelect.value;
       localStorage.setItem('theme', val);
       themeLink.disabled = val !== 'vscode';
-    const darkToggle = document.getElementById('darkToggle');
-    const savedTheme = localStorage.getItem('darkMode');
-    if (savedTheme === 'true') document.documentElement.classList.add('dark');
-    darkToggle.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
-    darkToggle.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
-      const isDark = document.documentElement.classList.contains('dark');
-      localStorage.setItem('darkMode', isDark);
-      darkToggle.textContent = isDark ? '☀️' : '🌙';
+    });
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('themeMode', isDark ? 'dark' : 'light');
+      themeToggle.textContent = isDark ? '☀️' : '🌙';
     });
   </script>
 </body>

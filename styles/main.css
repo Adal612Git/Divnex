@@ -9,7 +9,7 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', 'Segoe UI', 'Fira Code', sans-serif;
+  font-family: 'Inter', 'Segoe UI', 'system-ui', sans-serif;
   background: var(--bg);
   color: var(--fg);
   transition: background 0.3s, color 0.3s;

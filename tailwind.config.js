@@ -1,11 +1,12 @@
 module.exports = {
   darkMode: 'class',
-  content: ['./index.html', './components/**/*.js'],
+  content: ['./index.html', './components/**/*.js', './divnex.js'],
   theme: {
     extend: {
       fontFamily: {
-        inter: ['Inter','Segoe UI','system-ui','sans-serif']
+        sans: ['Inter', 'Segoe UI', 'system-ui', 'sans-serif']
       }
     }
-  }
+  },
+  plugins: []
 };
