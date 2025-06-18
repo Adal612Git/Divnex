@@ -1,0 +1,8 @@
+{
+  "title": "Nueva Tarea",
+  "description": "Descripcion",
+  "status": "To Do",
+  "priority": "Media",
+  "type": "General",
+  "estimate": 1
+}
