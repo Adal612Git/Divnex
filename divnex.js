@@ -102,16 +102,18 @@ const App = {
       container.appendChild(createTaskRow(task, {
         onClick: (_e, t) => this.editTask(t),
         onContext: (e, t) => this.showContextMenu(e, t),
-        onDragStart: (_e, t) => this.startDrag(t),
-        onDragOver: e => e.preventDefault(),
-        onDrop: (_e, t) => {
+        onDragStart: (e, t) => this.startDrag(e, t),
+        onDragOver: e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; },
+        onDrop: (e, t) => {
+          e.preventDefault();
           const idx = project.tasks.findIndex(x => x.id === t.id);
           this.dropList(idx);
         }
       }));
     });
-    container.ondragover = e => e.preventDefault();
+    container.ondragover = e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; };
     container.ondrop = e => {
+      e.preventDefault();
       if (e.target === container) this.dropList(-1);
     };
   },
@@ -121,13 +123,13 @@ const App = {
     const statuses = ['To Do', 'In Progress', 'Done'];
     statuses.forEach(status => {
       const { column, list } = createKanbanColumn(status);
-      list.ondragover = e => e.preventDefault();
-      list.ondrop = () => this.dropKanban(status);
+      list.ondragover = e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; };
+      list.ondrop = e => { e.preventDefault(); this.dropKanban(status); };
       project.tasks.filter(t => t.status === status).forEach(t => {
         list.appendChild(createTaskCard(t, {
           onClick: (_e, task) => this.editTask(task),
           onContext: (e, task) => this.showContextMenu(e, task),
-          onDragStart: (_e, task) => this.startDrag(task)
+          onDragStart: (e, task) => this.startDrag(e, task)
         }));
       });
       board.appendChild(column);
@@ -243,7 +245,12 @@ const App = {
     };
     reader.readAsText(file);
   },
-  startDrag(task) {
+  startDrag(e, task) {
+    e.dataTransfer.effectAllowed = 'move';
+    try {
+      // Some browsers require data to be set for drag to start
+      e.dataTransfer.setData('text/plain', String(task.id));
+    } catch {}
     this.draggedTask = task;
   },
   dropKanban(status) {
