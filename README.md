@@ -25,3 +25,6 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
 - Las tareas con fecha se muestran en el calendario de forma automática.
 
 La aplicación incluye datos de ejemplo la primera vez que se abre para mostrar el funcionamiento básico.
+## Temas
+
+Puedes cambiar entre el tema claro y uno inspirado en VS Code desde el menú superior. El ajuste se guarda en `localStorage`.

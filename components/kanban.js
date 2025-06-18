@@ -11,7 +11,7 @@ export function statusColor(status) {
 
 export function createKanbanColumn(title) {
   const column = document.createElement('div');
-  column.className = 'kanban-column bg-gray-100 rounded-lg p-4 flex-1 mr-4 last:mr-0';
+  column.className = 'kanban-column flex-1 mr-4 last:mr-0';
   const header = document.createElement('h3');
   header.className = 'font-semibold mb-2';
   header.textContent = title;
@@ -24,7 +24,7 @@ export function createKanbanColumn(title) {
 
 export function createTaskCard(task, handlers = {}) {
   const card = document.createElement('div');
-  card.className = 'relative bg-white rounded-lg shadow p-4 text-sm cursor-pointer select-none min-h-[96px] flex flex-col justify-between';
+  card.className = 'task-card relative text-sm cursor-pointer select-none min-h-[96px] flex flex-col justify-between';
   card.draggable = true;
   card.dataset.id = task.id;
   card.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;

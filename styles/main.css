@@ -1,7 +1,18 @@
+:root {
+  --bg: #f9fafb;
+  --fg: #111827;
+  --accent: #6366f1;
+  --accent-bg: rgba(99,102,241,0.2);
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb;
+}
+
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: #f9fafb;
+  font-family: 'Inter', 'Segoe UI', 'Fira Code', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  transition: background 0.3s, color 0.3s;
 }
 
 .select-none {
@@ -13,9 +24,27 @@ body {
 }
 
 .highlight-drop-target {
-  background-color: rgba(59, 130, 246, 0.2);
-  border: 2px dashed #3b82f6;
-  transition: all 0.2s ease;
+  background-color: var(--accent-bg);
+  border: 2px dashed var(--accent);
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.task-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  color: var(--fg);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.task-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.kanban-column {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 16px;
 }
 
 .bg-indigo-100 {
