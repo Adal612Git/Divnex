@@ -103,13 +103,35 @@ const App = {
     const main = document.getElementById('mainView');
     main.innerHTML = '';
     if (!this.currentProject) return;
+    const header = document.createElement('div');
+    header.className = 'flex items-center justify-between mb-4';
+    const title = document.createElement('h2');
+    title.className = 'text-xl font-semibold';
+    title.textContent = this.currentProject.name;
+    const actions = document.createElement('div');
+    const edit = document.createElement('button');
+    edit.textContent = '✎';
+    edit.className = 'text-blue-500 mr-2';
+    edit.onclick = () => this.renameProject(this.currentProject);
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.className = 'text-red-500';
+    del.onclick = () => this.deleteProject(this.currentProject);
+    actions.appendChild(edit);
+    actions.appendChild(del);
+    header.appendChild(title);
+    header.appendChild(actions);
+    main.appendChild(header);
+
+    const content = document.createElement('div');
     if (this.currentView === 'kanban') {
-      this.renderKanban(main, this.currentProject);
+      this.renderKanban(content, this.currentProject);
     } else if (this.currentView === 'list') {
-      this.renderList(main, this.currentProject);
+      this.renderList(content, this.currentProject);
     } else {
-      main.textContent = 'Vista calendario no implementada';
+      content.textContent = 'Vista calendario no implementada';
     }
+    main.appendChild(content);
   },
   renderList(container, project) {
     project.tasks.forEach(task => {
@@ -123,6 +145,7 @@ const App = {
           const idx = project.tasks.findIndex(x => x.id === t.id);
           this.dropList(idx);
         },
+        onEdit: t => this.editTask(t),
         onDelete: t => { this.removeTask(t); this.renderView(); }
       }));
     });
@@ -159,6 +182,7 @@ const App = {
           onClick: (_e, task) => this.editTask(task),
           onContext: (e, task) => this.showContextMenu(e, task),
           onDragStart: (e, task) => this.startDrag(e, task),
+          onEdit: task => this.editTask(task),
           onDelete: task => { this.removeTask(task); this.renderView(); }
         }));
       });
