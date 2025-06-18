@@ -178,7 +178,7 @@ const App = {
   },
   renderKanban(container, project) {
     const board = document.createElement('div');
-    board.className = 'flex gap-4';
+    board.className = 'flex gap-4 overflow-x-auto flex-nowrap';
     const statuses = ['To Do', 'In Progress', 'Done'];
     statuses.forEach(status => {
       const { column, list } = createKanbanColumn(status);

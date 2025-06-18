@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/components.css">
 </head>
-<body class="font-inter bg-gray-50 dark:bg-gray-800 h-screen flex flex-col">
+  <body class="font-inter bg-gray-50 dark:bg-gray-800 text-slate-700 h-screen flex flex-col">
   <header class="bg-gradient-to-r from-indigo-700 to-indigo-900 text-white p-4 flex justify-between items-center">
     <h1 class="text-xl font-semibold">Divnex</h1>
     <nav class="space-x-2 flex items-center">
@@ -34,7 +34,7 @@
     </nav>
   </header>
   <div id="container" class="flex flex-1 overflow-hidden">
-    <aside id="sidebar" class="w-64 bg-gray-100 dark:bg-gray-900 border-r p-4 overflow-y-auto">
+    <aside id="sidebar" class="w-64 bg-gradient-to-b from-indigo-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 border-r p-4 overflow-y-auto">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold">Proyectos</h2>
         <button id="addProjectBtn" class="text-indigo-600 hover:text-indigo-800">+</button>
@@ -49,11 +49,11 @@
   </div>
   <div id="taskModal" class="modal hidden">
     <div class="modal-content bg-white dark:bg-gray-800">
-      <div id="headerPreview" class="h-24 rounded-t-xl bg-gray-200 dark:bg-gray-700 bg-cover bg-center relative">
-        <input id="headerColor" type="color" class="absolute bottom-2 left-2" />
-        <input id="headerImage" type="file" accept="image/*" class="absolute bottom-2 left-20" />
+      <div id="headerPreview" class="h-24 rounded-t-2xl bg-gray-200 dark:bg-gray-700 bg-cover bg-center relative">
+        <input id="headerColor" type="color" class="absolute bottom-2 left-2 color-input" />
+        <input id="headerImage" type="file" accept="image/*" class="absolute bottom-2 left-20 file-input w-auto" />
       </div>
-      <div class="p-6 flex space-x-6">
+      <div class="p-6 grid grid-cols-2 gap-6">
         <div class="flex-1 space-y-3">
           <h3 id="taskModalTitle" class="text-lg font-semibold">Nueva Tarea</h3>
           <input id="taskTitle" type="text" class="input-group" placeholder="Título" />
@@ -65,10 +65,10 @@
           </select>
           <input id="taskDueDate" type="datetime-local" class="input-group" />
           <label class="block text-sm">Color
-            <input id="taskColor" type="color" class="ml-2" />
+          <input id="taskColor" type="color" class="ml-2 color-input" />
           </label>
           <label class="block text-sm">Adjuntos
-            <input id="taskAttachments" type="file" multiple class="input-group mt-1" />
+            <input id="taskAttachments" type="file" multiple class="file-input mt-1" />
           </label>
           <div>
             <div class="flex mb-1">
@@ -81,7 +81,7 @@
         <div class="w-64 space-y-3">
           <h4 class="font-semibold">Notas</h4>
           <textarea id="noteText" class="input-group" rows="3" placeholder="Escribe una nota"></textarea>
-          <input id="noteImages" type="file" accept="image/*" multiple class="input-group" />
+          <input id="noteImages" type="file" accept="image/*" multiple class="file-input" />
           <button id="addNoteBtn" class="btn btn-primary w-full">Agregar Nota</button>
           <ul id="noteList" class="space-y-1 max-h-40 overflow-y-auto"></ul>
         </div>
