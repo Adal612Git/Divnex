@@ -16,8 +16,9 @@
     };
   </script>
   <link rel="stylesheet" href="styles/main.css">
+  <link id="themeStylesheet" rel="stylesheet" href="styles/theme-vscode.css" disabled>
 </head>
-<body class="font-inter bg-gray-50 h-screen flex flex-col">
+<body class="font-inter h-screen flex flex-col">
   <header class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white p-4 flex justify-between items-center">
     <h1 class="text-xl font-semibold">Divnex</h1>
     <nav class="space-x-2">
@@ -28,6 +29,10 @@
       <button id="importBtn" class="px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Importar</button>
       <button id="addTaskBtn" class="ml-3 px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Nueva Tarea</button>
       <input type="file" id="importFile" class="hidden" />
+      <select id="themeSelect" class="ml-3 px-2 py-1 rounded-md bg-white/20 text-white">
+        <option value="light">Claro</option>
+        <option value="vscode">VS Code</option>
+      </select>
     </nav>
   </header>
   <div id="container" class="flex flex-1 overflow-hidden">
@@ -91,5 +96,17 @@
   </div>
   <script type="module" src="divnex.js"></script>
   <script type="module" src="debug_test.js"></script>
+  <script>
+    const themeLink = document.getElementById('themeStylesheet');
+    const themeSelect = document.getElementById('themeSelect');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    themeSelect.value = savedTheme;
+    if (savedTheme === 'vscode') themeLink.disabled = false;
+    themeSelect.addEventListener('change', () => {
+      const val = themeSelect.value;
+      localStorage.setItem('theme', val);
+      themeLink.disabled = val !== 'vscode';
+    });
+  </script>
 </body>
 </html>
