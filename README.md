@@ -15,7 +15,7 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
 - `index.html` – Entrada principal de la aplicación.
 - `divnex.js` – Lógica, modelos de datos y almacenamiento.
 - `components/` – Componentes reutilizables como columnas Kanban y tarjetas.
-- `styles/` – Estilos básicos.
+- `styles/` – Hojas CSS y utilidades de componentes.
 - `templates/` – Plantillas de proyectos y tareas.
 
 ## Novedades
@@ -25,3 +25,9 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
 - Las tareas con fecha se muestran en el calendario de forma automática.
 
 La aplicación incluye datos de ejemplo la primera vez que se abre para mostrar el funcionamiento básico.
+
+## Estilos y personalización
+
+El diseño utiliza **Tailwind CSS** con soporte para modo oscuro. Los estilos comunes se encuentran en `styles/components.css` donde se definen clases reutilizables (`btn`, `modal`, `task-card`, etc.).
+
+Para cambiar colores o agregar nuevos botones puedes editar ese archivo o aplicar utilidades de Tailwind directamente en el HTML. El tema (claro u oscuro) se guarda en `localStorage` y puede modificarse desde el botón con icono de sol/luna en la esquina superior derecha.
