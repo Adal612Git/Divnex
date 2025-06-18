@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Divnex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { inter: ['Inter', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="font-inter bg-gray-50 h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-semibold">Divnex</h1>
+    <nav class="space-x-2">
+      <button data-view="list" class="view-btn px-3 py-1 rounded-md hover:bg-white/20">Lista</button>
+      <button data-view="kanban" class="view-btn px-3 py-1 rounded-md hover:bg-white/20">Kanban</button>
+      <button data-view="calendar" class="view-btn px-3 py-1 rounded-md hover:bg-white/20">Calendario</button>
+      <button id="exportBtn" class="ml-3 px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Exportar</button>
+      <button id="importBtn" class="px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Importar</button>
+      <button id="addTaskBtn" class="ml-3 px-3 py-1 rounded-md bg-white/20 hover:bg-white/30">Nueva Tarea</button>
+      <input type="file" id="importFile" class="hidden" />
+    </nav>
+  </header>
+  <div id="container" class="flex flex-1 overflow-hidden">
+    <aside id="sidebar" class="w-64 bg-white border-r p-4 overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold">Proyectos</h2>
+        <button id="addProjectBtn" class="text-indigo-600 hover:text-indigo-800">+</button>
+      </div>
+      <ul id="projectList" class="space-y-2"></ul>
+    </aside>
+    <main id="mainView" class="flex-1 p-4 overflow-y-auto"></main>
+  </div>
+  <div id="contextMenu" class="absolute bg-white rounded-md shadow text-sm py-1 hidden z-50">
+    <button id="editTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100">Editar</button>
+    <button id="deleteTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100">Eliminar</button>
+  </div>
+  <div id="taskModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg p-4 w-80 space-y-2">
+      <h3 id="taskModalTitle" class="text-lg font-semibold">Nueva Tarea</h3>
+      <input id="taskTitle" type="text" class="w-full border rounded p-2" placeholder="Título" />
+      <select id="taskStatus" class="w-full border rounded p-2">
+        <option value="To Do">To Do</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Done">Done</option>
+      </select>
+      <label class="block text-sm">Color
+        <input id="taskColor" type="color" class="ml-2" />
+      </label>
+      <div>
+        <div class="flex mb-1">
+          <input id="subtaskInput" type="text" class="flex-1 border rounded-l p-2" placeholder="Subtarea" />
+          <button id="addSubtaskBtn" class="border rounded-r px-2 bg-gray-100">+</button>
+        </div>
+        <ul id="subtaskList" class="space-y-1 max-h-32 overflow-y-auto"></ul>
+      </div>
+      <div class="flex justify-end space-x-2 pt-2">
+        <button id="cancelTaskBtn" class="px-3 py-1 rounded bg-gray-200">Cancelar</button>
+        <button id="saveTaskBtn" class="px-3 py-1 rounded bg-indigo-500 text-white">Guardar</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="divnex.js"></script>
+  <script type="module" src="debug_test.js"></script>
+</body>
+</html>
