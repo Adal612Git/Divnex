@@ -79,9 +79,23 @@ const App = {
     list.innerHTML = '';
     this.data.projects.forEach(p => {
       const li = document.createElement('li');
-      li.className = 'cursor-pointer px-2 py-1 rounded hover:bg-gray-100';
-      li.textContent = p.name;
-      li.onclick = () => { this.currentProject = p; this.renderView(); };
+      li.className = 'flex items-center justify-between cursor-pointer px-2 py-1 rounded hover:bg-gray-100';
+      const span = document.createElement('span');
+      span.textContent = p.name;
+      span.onclick = () => { this.currentProject = p; this.renderView(); };
+      const actions = document.createElement('div');
+      const edit = document.createElement('button');
+      edit.textContent = '✎';
+      edit.className = 'text-blue-500 ml-2';
+      edit.onclick = e => { e.stopPropagation(); this.renameProject(p); };
+      const del = document.createElement('button');
+      del.textContent = '✕';
+      del.className = 'text-red-500 ml-1';
+      del.onclick = e => { e.stopPropagation(); this.deleteProject(p); };
+      actions.appendChild(edit);
+      actions.appendChild(del);
+      li.appendChild(span);
+      li.appendChild(actions);
       list.appendChild(li);
     });
   },
@@ -108,7 +122,8 @@ const App = {
           e.preventDefault();
           const idx = project.tasks.findIndex(x => x.id === t.id);
           this.dropList(idx);
-        }
+        },
+        onDelete: t => { this.removeTask(t); this.renderView(); }
       }));
     });
     container.ondragover = e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; };
@@ -143,7 +158,8 @@ const App = {
         list.appendChild(createTaskCard(t, {
           onClick: (_e, task) => this.editTask(task),
           onContext: (e, task) => this.showContextMenu(e, task),
-          onDragStart: (e, task) => this.startDrag(e, task)
+          onDragStart: (e, task) => this.startDrag(e, task),
+          onDelete: task => { this.removeTask(task); this.renderView(); }
         }));
       });
       board.appendChild(column);
@@ -222,11 +238,15 @@ const App = {
   hideContextMenu() {
     document.getElementById('contextMenu').classList.add('hidden');
   },
-  deleteTask() {
-    if (!this.contextTask || !this.currentProject) return;
-    this.currentProject.tasks = this.currentProject.tasks.filter(t => t !== this.contextTask);
-    this.contextTask = null;
+  removeTask(task) {
+    if (!task || !this.currentProject) return;
+    this.currentProject.tasks = this.currentProject.tasks.filter(t => t !== task);
     this.save();
+  },
+  deleteTask() {
+    if (!this.contextTask) return;
+    this.removeTask(this.contextTask);
+    this.contextTask = null;
     this.renderView();
     this.hideContextMenu();
   },
@@ -258,6 +278,27 @@ const App = {
       this.renderView();
     };
     reader.readAsText(file);
+  },
+  renameProject(project) {
+    const name = prompt('Nuevo nombre del proyecto', project.name);
+    if (name) {
+      project.name = name;
+      this.save();
+      this.renderProjectList();
+      this.renderView();
+    }
+  },
+  deleteProject(project) {
+    const idx = this.data.projects.indexOf(project);
+    if (idx !== -1) {
+      this.data.projects.splice(idx, 1);
+      if (this.currentProject === project) {
+        this.currentProject = this.data.projects[0] || null;
+      }
+      this.save();
+      this.renderProjectList();
+      this.renderView();
+    }
   },
   startDrag(e, task) {
     e.dataTransfer.effectAllowed = 'move';

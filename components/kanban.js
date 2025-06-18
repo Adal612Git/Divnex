@@ -24,7 +24,7 @@ export function createKanbanColumn(title) {
 
 export function createTaskCard(task, handlers = {}) {
   const card = document.createElement('div');
-  card.className = 'bg-white rounded-lg shadow p-3 text-sm cursor-pointer select-none';
+  card.className = 'relative bg-white rounded-lg shadow p-3 text-sm cursor-pointer select-none';
   card.draggable = true;
   card.dataset.id = task.id;
   card.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;
@@ -41,5 +41,12 @@ export function createTaskCard(task, handlers = {}) {
   if (handlers.onClick) card.addEventListener('click', e => handlers.onClick(e, task));
   if (handlers.onContext) card.addEventListener('contextmenu', e => handlers.onContext(e, task));
   if (handlers.onDragStart) card.addEventListener('dragstart', e => handlers.onDragStart(e, task));
+  if (handlers.onDelete) {
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.className = 'absolute top-1 right-1 text-red-500';
+    del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
+    card.appendChild(del);
+  }
   return card;
 }
