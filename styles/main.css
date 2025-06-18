@@ -2,6 +2,11 @@ body {
   margin: 0;
   font-family: 'Inter', sans-serif;
   background: #f9fafb;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', 'system-ui', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  transition: background 0.3s, color 0.3s;
 }
 
 .select-none {
@@ -17,3 +22,21 @@ body {
   border: 2px dashed #3b82f6;
   transition: all 0.2s ease;
 }
+.select-none { user-select: none; }
+.pointer-events-none { pointer-events: none; }
+.highlight-drop-target {
+  background-color: rgba(99,102,241,0.2);
+  border: 2px dashed #6366f1;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+
+.kanban-column {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.dark .kanban-column {
+  background-color: #1f2937;
+}
+.bg-indigo-100 { background-color: rgba(199,210,254,1); }

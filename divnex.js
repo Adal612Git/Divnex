@@ -54,6 +54,7 @@ const App = {
   draggedTask: null,
   load() {
     const saved = localStorage.getItem('divnexData');
+@@ -73,52 +73,52 @@ const App = {
     if (saved) {
       const parsed = JSON.parse(saved);
       this.data.projects = parsed.projects.map(p => Project.fromJSON(p));
@@ -83,6 +84,16 @@ const App = {
       const span = document.createElement('span');
       span.textContent = p.name;
       span.onclick = () => { this.currentProject = p; this.renderView(); };
+      if (this.currentProject === p) li.classList.add('bg-indigo-100');
+      li.className = 'flex items-center justify-between cursor-pointer px-2 py-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-800';
+      if (this.currentProject === p) li.classList.add('bg-indigo-100', 'dark:bg-indigo-800');
+      li.onclick = () => {
+        this.currentProject = p;
+        this.renderProjectList();
+        this.renderView();
+      };
+      const span = document.createElement('span');
+      span.textContent = p.name;
       const actions = document.createElement('div');
       const edit = document.createElement('button');
       edit.textContent = '✎';
@@ -390,3 +401,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export { App };
+
+    const main = document.getElementById('mainView');

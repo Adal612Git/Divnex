@@ -12,6 +12,8 @@ export function statusColor(status) {
 export function createKanbanColumn(title) {
   const column = document.createElement('div');
   column.className = 'kanban-column bg-gray-100 rounded-lg p-4 flex-1 mr-4 last:mr-0';
+=======
+  column.className = 'kanban-column flex-1 mr-4 last:mr-0 bg-white dark:bg-gray-800 p-4 rounded-xl shadow';
   const header = document.createElement('h3');
   header.className = 'font-semibold mb-2';
   header.textContent = title;
@@ -25,6 +27,7 @@ export function createKanbanColumn(title) {
 export function createTaskCard(task, handlers = {}) {
   const card = document.createElement('div');
   card.className = 'relative bg-white rounded-lg shadow p-3 text-sm cursor-pointer select-none';
+  card.className = 'task-card bg-white dark:bg-[#1e1e1e] rounded-lg shadow-md p-4 text-sm cursor-pointer select-none space-y-2 hover:shadow-lg hover:-translate-y-1 transition';
   card.draggable = true;
   card.dataset.id = task.id;
   card.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;
@@ -47,6 +50,60 @@ export function createTaskCard(task, handlers = {}) {
     del.className = 'absolute top-1 right-1 text-red-500';
     del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
     card.appendChild(del);
+  }
+  return card;
+}
+
+  const info = document.createElement('div');
+  info.className = 'flex justify-between items-center mt-2 text-xs text-gray-500 dark:text-gray-400';
+  const left = document.createElement('div');
+  if (task.dueDate) {
+    const due = document.createElement('span');
+    due.className = 'mr-2 cursor-pointer';
+    due.textContent = `📅 ${task.dueDate}`;
+    if (handlers.onEdit) due.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
+    left.appendChild(due);
+  }
+  if (task.attachments && task.attachments.length) {
+    const att = document.createElement('span');
+    att.className = 'mr-2';
+    att.textContent = `📎 ${task.attachments.length}`;
+    left.appendChild(att);
+  }
+  if (task.subtasks && task.subtasks.length) {
+    const done = task.subtasks.filter(s => s.done).length;
+    const progress = document.createElement('span');
+    progress.textContent = `☑️ ${done}/${task.subtasks.length}`;
+    left.appendChild(progress);
+  }
+  info.appendChild(left);
+  const add = document.createElement('span');
+  add.className = 'ml-auto cursor-pointer';
+  add.textContent = '➕';
+  if (handlers.onEdit) add.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
+  info.appendChild(add);
+  card.appendChild(info);
+  if (handlers.onClick) card.addEventListener('click', e => handlers.onClick(e, task));
+  if (handlers.onContext) card.addEventListener('contextmenu', e => handlers.onContext(e, task));
+  if (handlers.onDragStart) card.addEventListener('dragstart', e => handlers.onDragStart(e, task));
+  if (handlers.onEdit || handlers.onDelete) {
+    const actions = document.createElement('div');
+    actions.className = 'absolute top-1 right-1 space-x-1';
+    if (handlers.onEdit) {
+      const edit = document.createElement('button');
+      edit.textContent = '✎';
+      edit.className = 'btn btn-outline text-blue-500 px-1';
+      edit.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
+      actions.appendChild(edit);
+    }
+    if (handlers.onDelete) {
+      const del = document.createElement('button');
+      del.textContent = '✕';
+      del.className = 'btn btn-outline text-red-500 px-1';
+      del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
+      actions.appendChild(del);
+    }
+    card.appendChild(actions);
   }
   return card;
 }
