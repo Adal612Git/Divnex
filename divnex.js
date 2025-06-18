@@ -95,8 +95,8 @@ const App = {
     list.innerHTML = '';
     this.data.projects.forEach(p => {
       const li = document.createElement('li');
-      li.className = 'flex items-center justify-between cursor-pointer px-2 py-1 rounded hover:bg-gray-100';
-      if (this.currentProject === p) li.classList.add('bg-indigo-100');
+      li.className = 'flex items-center justify-between cursor-pointer px-3 py-2 rounded hover:bg-indigo-100 dark:hover:bg-gray-800';
+      if (this.currentProject === p) li.classList.add('bg-indigo-100', 'dark:bg-gray-800');
       li.onclick = () => {
         this.currentProject = p;
         this.renderProjectList();
@@ -107,11 +107,11 @@ const App = {
       const actions = document.createElement('div');
       const edit = document.createElement('button');
       edit.textContent = '✎';
-      edit.className = 'text-blue-500 ml-2';
+      edit.className = 'text-blue-500 hover:text-blue-700 ml-2';
       edit.onclick = e => { e.stopPropagation(); this.renameProject(p); };
       const del = document.createElement('button');
       del.textContent = '✕';
-      del.className = 'text-red-500 ml-1';
+      del.className = 'text-red-500 hover:text-red-700 ml-1';
       del.onclick = e => { e.stopPropagation(); this.deleteProject(p); };
       actions.appendChild(edit);
       actions.appendChild(del);
