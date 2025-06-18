@@ -17,3 +17,7 @@ body {
   border: 2px dashed #3b82f6;
   transition: all 0.2s ease;
 }
+
+.bg-indigo-100 {
+  background-color: rgba(199, 210, 254, 1);
+}

@@ -80,9 +80,14 @@ const App = {
     this.data.projects.forEach(p => {
       const li = document.createElement('li');
       li.className = 'flex items-center justify-between cursor-pointer px-2 py-1 rounded hover:bg-gray-100';
+      if (this.currentProject === p) li.classList.add('bg-indigo-100');
+      li.onclick = () => {
+        this.currentProject = p;
+        this.renderProjectList();
+        this.renderView();
+      };
       const span = document.createElement('span');
       span.textContent = p.name;
-      span.onclick = () => { this.currentProject = p; this.renderView(); };
       const actions = document.createElement('div');
       const edit = document.createElement('button');
       edit.textContent = '✎';
