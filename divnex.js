@@ -95,7 +95,7 @@ const App = {
     list.innerHTML = '';
     this.data.projects.forEach(p => {
       const li = document.createElement('li');
-      li.className = 'flex items-center justify-between cursor-pointer px-2 py-1 rounded hover:bg-gray-100';
+      li.className = 'flex items-center justify-between cursor-pointer px-2 py-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900';
       if (this.currentProject === p) li.classList.add('bg-indigo-100');
       li.onclick = () => {
         this.currentProject = p;

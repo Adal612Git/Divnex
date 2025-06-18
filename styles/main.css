@@ -29,17 +29,6 @@ body {
   transition: background-color 0.2s, border-color 0.2s;
 }
 
-.task-card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  padding: 16px;
-  color: var(--fg);
-  transition: box-shadow 0.2s, background 0.2s;
-}
-.task-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
 
 .kanban-column {
   background: var(--card-bg);
