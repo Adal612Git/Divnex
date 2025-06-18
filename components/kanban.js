@@ -25,8 +25,17 @@ export function createKanbanColumn(title) {
 export function createTaskCard(task, handlers = {}) {
   const card = document.createElement('div');
   card.className = 'bg-white rounded-lg shadow p-3 text-sm cursor-pointer';
-  card.style.borderLeft = `4px solid ${statusColor(task.status)}`;
-  card.textContent = task.title;
+  card.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;
+  const title = document.createElement('div');
+  title.textContent = task.title;
+  card.appendChild(title);
+  if (task.subtasks && task.subtasks.length) {
+    const progress = document.createElement('div');
+    const done = task.subtasks.filter(s => s.done).length;
+    progress.className = 'text-xs text-gray-500';
+    progress.textContent = `${done}/${task.subtasks.length}`;
+    card.appendChild(progress);
+  }
   if (handlers.onClick) card.addEventListener('click', e => handlers.onClick(e, task));
   if (handlers.onContext) card.addEventListener('contextmenu', e => handlers.onContext(e, task));
   return card;

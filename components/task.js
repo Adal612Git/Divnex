@@ -3,9 +3,14 @@ import { statusColor } from './kanban.js';
 export function createTaskRow(task, handlers = {}) {
   const row = document.createElement('div');
   row.className = 'bg-white rounded-md shadow p-3 mb-2 flex justify-between items-center text-sm cursor-pointer';
-  row.style.borderLeft = `4px solid ${statusColor(task.status)}`;
+  row.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;
   const title = document.createElement('span');
-  title.textContent = task.title;
+  let text = task.title;
+  if (task.subtasks && task.subtasks.length) {
+    const done = task.subtasks.filter(s => s.done).length;
+    text += ` (${done}/${task.subtasks.length})`;
+  }
+  title.textContent = text;
   const status = document.createElement('span');
   status.className = 'text-gray-500';
   status.textContent = task.status;

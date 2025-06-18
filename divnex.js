@@ -1,7 +1,7 @@
 import { createKanbanColumn, createTaskCard } from "./components/kanban.js";
 import { createTaskRow } from "./components/task.js";
 class Task {
-  constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1 }) {
+  constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1, color = '', subtasks = [] }) {
     this.id = id || Date.now();
     this.title = title;
     this.description = description;
@@ -9,9 +9,21 @@ class Task {
     this.priority = priority;
     this.type = type;
     this.estimate = estimate;
+    this.color = color;
+    this.subtasks = subtasks.map(s => ({ id: s.id || Date.now(), title: s.title, done: !!s.done }));
   }
   toJSON() {
-    return { id: this.id, title: this.title, description: this.description, status: this.status, priority: this.priority, type: this.type, estimate: this.estimate };
+    return {
+      id: this.id,
+      title: this.title,
+      description: this.description,
+      status: this.status,
+      priority: this.priority,
+      type: this.type,
+      estimate: this.estimate,
+      color: this.color,
+      subtasks: this.subtasks
+    };
   }
   static fromJSON(obj) {
     return new Task(obj);
@@ -37,6 +49,8 @@ const App = {
   currentView: 'list',
   currentProject: null,
   contextTask: null,
+  modalTask: null,
+  modalSubtasks: [],
   load() {
     const saved = localStorage.getItem('divnexData');
     if (saved) {
@@ -107,12 +121,65 @@ const App = {
     container.appendChild(board);
   },
   editTask(task) {
-    const title = prompt('Editar título', task.title);
-    if (title) {
-      task.title = title;
-      this.save();
-      this.renderView();
+    this.showTaskModal(task);
+  },
+  addTask() {
+    this.showTaskModal(null);
+  },
+  showTaskModal(task) {
+    this.modalTask = task;
+    document.getElementById('taskModalTitle').textContent = task ? 'Editar Tarea' : 'Nueva Tarea';
+    document.getElementById('taskTitle').value = task ? task.title : '';
+    document.getElementById('taskStatus').value = task ? task.status : 'To Do';
+    document.getElementById('taskColor').value = task && task.color ? task.color : '#94a3b8';
+    this.modalSubtasks = task ? task.subtasks.map(s => ({ ...s })) : [];
+    this.renderSubtasks();
+    document.getElementById('taskModal').classList.remove('hidden');
+  },
+  closeTaskModal() {
+    document.getElementById('taskModal').classList.add('hidden');
+    this.modalTask = null;
+  },
+  renderSubtasks() {
+    const list = document.getElementById('subtaskList');
+    list.innerHTML = '';
+    this.modalSubtasks.forEach((s, idx) => {
+      const li = document.createElement('li');
+      li.className = 'flex items-center';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = s.done;
+      cb.onchange = () => { s.done = cb.checked; };
+      const span = document.createElement('span');
+      span.className = 'flex-1 ml-2';
+      span.textContent = s.title;
+      const del = document.createElement('button');
+      del.textContent = '✕';
+      del.className = 'text-red-500 ml-2';
+      del.onclick = () => { this.modalSubtasks.splice(idx, 1); this.renderSubtasks(); };
+      li.appendChild(cb);
+      li.appendChild(span);
+      li.appendChild(del);
+      list.appendChild(li);
+    });
+  },
+  saveTaskFromModal() {
+    const title = document.getElementById('taskTitle').value.trim();
+    if (!title) return;
+    const status = document.getElementById('taskStatus').value;
+    const color = document.getElementById('taskColor').value;
+    if (this.modalTask) {
+      this.modalTask.title = title;
+      this.modalTask.status = status;
+      this.modalTask.color = color;
+      this.modalTask.subtasks = this.modalSubtasks;
+    } else {
+      const task = new Task({ title, status, color, subtasks: this.modalSubtasks });
+      this.currentProject.tasks.push(task);
     }
+    this.save();
+    this.renderView();
+    this.closeTaskModal();
   },
   showContextMenu(e, task) {
     e.preventDefault();
@@ -177,6 +244,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const file = e.target.files[0];
     if (file) App.importJSON(file);
   };
+  document.getElementById('addTaskBtn').onclick = () => App.addTask();
+  document.getElementById('cancelTaskBtn').onclick = () => App.closeTaskModal();
+  document.getElementById('saveTaskBtn').onclick = () => App.saveTaskFromModal();
+  document.getElementById('addSubtaskBtn').onclick = () => {
+    const input = document.getElementById('subtaskInput');
+    const title = input.value.trim();
+    if (title) {
+      App.modalSubtasks.push({ id: Date.now(), title, done: false });
+      input.value = '';
+      App.renderSubtasks();
+    }
+  };
+  document.getElementById('taskModal').addEventListener('click', e => {
+    if (e.target.id === 'taskModal') App.closeTaskModal();
+  });
   document.getElementById('editTask').onclick = () => {
     if (App.contextTask) App.editTask(App.contextTask);
     App.hideContextMenu();
