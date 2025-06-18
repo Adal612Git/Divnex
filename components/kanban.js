@@ -41,12 +41,24 @@ export function createTaskCard(task, handlers = {}) {
   if (handlers.onClick) card.addEventListener('click', e => handlers.onClick(e, task));
   if (handlers.onContext) card.addEventListener('contextmenu', e => handlers.onContext(e, task));
   if (handlers.onDragStart) card.addEventListener('dragstart', e => handlers.onDragStart(e, task));
-  if (handlers.onDelete) {
-    const del = document.createElement('button');
-    del.textContent = '✕';
-    del.className = 'absolute top-1 right-1 text-red-500';
-    del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
-    card.appendChild(del);
+  if (handlers.onEdit || handlers.onDelete) {
+    const actions = document.createElement('div');
+    actions.className = 'absolute top-1 right-1 space-x-1';
+    if (handlers.onEdit) {
+      const edit = document.createElement('button');
+      edit.textContent = '✎';
+      edit.className = 'text-blue-500';
+      edit.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
+      actions.appendChild(edit);
+    }
+    if (handlers.onDelete) {
+      const del = document.createElement('button');
+      del.textContent = '✕';
+      del.className = 'text-red-500';
+      del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
+      actions.appendChild(del);
+    }
+    card.appendChild(actions);
   }
   return card;
 }

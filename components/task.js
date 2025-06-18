@@ -23,12 +23,24 @@ export function createTaskRow(task, handlers = {}) {
   if (handlers.onDragStart) row.addEventListener('dragstart', e => handlers.onDragStart(e, task));
   if (handlers.onDrop) row.addEventListener('drop', e => handlers.onDrop(e, task));
   if (handlers.onDragOver) row.addEventListener('dragover', e => handlers.onDragOver(e, task));
-  if (handlers.onDelete) {
-    const del = document.createElement('button');
-    del.textContent = '✕';
-    del.className = 'absolute top-1 right-1 text-red-500';
-    del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
-    row.appendChild(del);
+  if (handlers.onEdit || handlers.onDelete) {
+    const actions = document.createElement('div');
+    actions.className = 'absolute top-1 right-1 space-x-1';
+    if (handlers.onEdit) {
+      const edit = document.createElement('button');
+      edit.textContent = '✎';
+      edit.className = 'text-blue-500';
+      edit.onclick = e => { e.stopPropagation(); handlers.onEdit(task); };
+      actions.appendChild(edit);
+    }
+    if (handlers.onDelete) {
+      const del = document.createElement('button');
+      del.textContent = '✕';
+      del.className = 'text-red-500';
+      del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
+      actions.appendChild(del);
+    }
+    row.appendChild(actions);
   }
   return row;
 }
