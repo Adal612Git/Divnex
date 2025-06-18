@@ -31,6 +31,12 @@ export function createTaskCard(task, handlers = {}) {
   const title = document.createElement('div');
   title.textContent = task.title;
   card.appendChild(title);
+  if (task.dueDate) {
+    const due = document.createElement('div');
+    due.className = 'text-xs text-gray-500';
+    due.textContent = task.dueDate;
+    card.appendChild(due);
+  }
   if (task.subtasks && task.subtasks.length) {
     const progress = document.createElement('div');
     const done = task.subtasks.filter(s => s.done).length;

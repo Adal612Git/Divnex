@@ -16,6 +16,7 @@ export function createTaskRow(task, handlers = {}) {
   const status = document.createElement('span');
   status.className = 'text-gray-500';
   status.textContent = task.status;
+  if (task.dueDate) status.textContent += ` - ${task.dueDate}`;
   row.appendChild(title);
   row.appendChild(status);
   if (handlers.onClick) row.addEventListener('click', e => handlers.onClick(e, task));
