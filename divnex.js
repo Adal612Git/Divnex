@@ -1,7 +1,7 @@
 import { createKanbanColumn, createTaskCard } from "./components/kanban.js";
 import { createTaskRow } from "./components/task.js";
 class Task {
-  constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1, color = '', subtasks = [] }) {
+  constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1, color = '', dueDate = '', subtasks = [] }) {
     this.id = id || Date.now();
     this.title = title;
     this.description = description;
@@ -10,6 +10,7 @@ class Task {
     this.type = type;
     this.estimate = estimate;
     this.color = color;
+    this.dueDate = dueDate;
     this.subtasks = subtasks.map(s => ({ id: s.id || Date.now(), title: s.title, done: !!s.done }));
   }
   toJSON() {
@@ -22,6 +23,7 @@ class Task {
       type: this.type,
       estimate: this.estimate,
       color: this.color,
+      dueDate: this.dueDate,
       subtasks: this.subtasks
     };
   }
@@ -52,6 +54,7 @@ const App = {
   modalTask: null,
   modalSubtasks: [],
   draggedTask: null,
+  calendarMonth: new Date(),
   load() {
     const saved = localStorage.getItem('divnexData');
     if (saved) {
@@ -134,7 +137,7 @@ const App = {
     } else if (this.currentView === 'list') {
       this.renderList(content, this.currentProject);
     } else {
-      content.textContent = 'Vista calendario no implementada';
+      this.renderCalendar(content, this.currentProject);
     }
     main.appendChild(content);
   },
@@ -195,6 +198,62 @@ const App = {
     });
     container.appendChild(board);
   },
+  renderCalendar(container, project) {
+    const month = this.calendarMonth;
+    const first = new Date(month.getFullYear(), month.getMonth(), 1);
+    const last = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+    const startDay = first.getDay();
+    const days = last.getDate();
+    const header = document.createElement('div');
+    header.className = 'flex items-center justify-between mb-2';
+    const title = document.createElement('h3');
+    title.className = 'font-semibold';
+    title.textContent = month.toLocaleString('default', { month: 'long', year: 'numeric' });
+    const nav = document.createElement('div');
+    const prev = document.createElement('button');
+    prev.textContent = '‹';
+    prev.onclick = () => { this.calendarMonth = new Date(month.getFullYear(), month.getMonth() - 1, 1); this.renderView(); };
+    const next = document.createElement('button');
+    next.textContent = '›';
+    next.onclick = () => { this.calendarMonth = new Date(month.getFullYear(), month.getMonth() + 1, 1); this.renderView(); };
+    nav.appendChild(prev);
+    nav.appendChild(next);
+    header.appendChild(title);
+    header.appendChild(nav);
+    container.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid grid-cols-7 gap-2';
+    const daysHeader = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+    daysHeader.forEach(d => {
+      const h = document.createElement('div');
+      h.className = 'text-center font-semibold';
+      h.textContent = d;
+      grid.appendChild(h);
+    });
+    for (let i = 0; i < startDay; i++) {
+      grid.appendChild(document.createElement('div'));
+    }
+    for (let d = 1; d <= days; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'border p-1 min-h-[60px]';
+      const label = document.createElement('div');
+      label.className = 'text-xs text-gray-600';
+      label.textContent = d;
+      cell.appendChild(label);
+      const dateStr = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      project.tasks.filter(t => t.dueDate === dateStr).forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'text-xs truncate rounded bg-white shadow px-1 my-1';
+        div.style.borderLeft = `3px solid ${t.color || '#94a3b8'}`;
+        div.textContent = t.title;
+        div.onclick = () => this.editTask(t);
+        cell.appendChild(div);
+      });
+      grid.appendChild(cell);
+    }
+    container.appendChild(grid);
+  },
   editTask(task) {
     this.showTaskModal(task);
   },
@@ -206,6 +265,7 @@ const App = {
     document.getElementById('taskModalTitle').textContent = task ? 'Editar Tarea' : 'Nueva Tarea';
     document.getElementById('taskTitle').value = task ? task.title : '';
     document.getElementById('taskStatus').value = task ? task.status : 'To Do';
+    document.getElementById('taskDueDate').value = task ? (task.dueDate || '') : '';
     document.getElementById('taskColor').value = task && task.color ? task.color : '#94a3b8';
     this.modalSubtasks = task ? task.subtasks.map(s => ({ ...s })) : [];
     this.renderSubtasks();
@@ -242,14 +302,16 @@ const App = {
     const title = document.getElementById('taskTitle').value.trim();
     if (!title) return;
     const status = document.getElementById('taskStatus').value;
+    const dueDate = document.getElementById('taskDueDate').value;
     const color = document.getElementById('taskColor').value;
     if (this.modalTask) {
       this.modalTask.title = title;
       this.modalTask.status = status;
+      this.modalTask.dueDate = dueDate;
       this.modalTask.color = color;
       this.modalTask.subtasks = this.modalSubtasks;
     } else {
-      const task = new Task({ title, status, color, subtasks: this.modalSubtasks });
+      const task = new Task({ title, status, color, dueDate, subtasks: this.modalSubtasks });
       this.currentProject.tasks.push(task);
     }
     this.save();
