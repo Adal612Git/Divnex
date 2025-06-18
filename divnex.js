@@ -123,8 +123,22 @@ const App = {
     const statuses = ['To Do', 'In Progress', 'Done'];
     statuses.forEach(status => {
       const { column, list } = createKanbanColumn(status);
-      list.ondragover = e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; };
-      list.ondrop = e => { e.preventDefault(); this.dropKanban(status); };
+      list.ondragenter = e => {
+        e.preventDefault();
+        column.classList.add('highlight-drop-target');
+      };
+      list.ondragover = e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      };
+      list.ondragleave = () => {
+        column.classList.remove('highlight-drop-target');
+      };
+      list.ondrop = e => {
+        e.preventDefault();
+        column.classList.remove('highlight-drop-target');
+        this.dropKanban(status);
+      };
       project.tasks.filter(t => t.status === status).forEach(t => {
         list.appendChild(createTaskCard(t, {
           onClick: (_e, task) => this.editTask(task),
@@ -254,7 +268,10 @@ const App = {
     this.draggedTask = task;
   },
   dropKanban(status) {
-    if (!this.draggedTask || !this.currentProject) return;
+    if (!this.draggedTask || !this.currentProject) {
+      console.log('❌ Drag fallido');
+      return;
+    }
     const idx = this.currentProject.tasks.findIndex(t => t.id === this.draggedTask.id);
     if (idx !== -1) {
       this.currentProject.tasks[idx].status = status;
@@ -262,6 +279,9 @@ const App = {
       this.currentProject.tasks.push(t);
       this.save();
       this.renderView();
+      console.log(`✅ Drag exitoso a ${status}`);
+    } else {
+      console.log('❌ Drag fallido');
     }
     this.draggedTask = null;
   },
@@ -286,6 +306,7 @@ const App = {
 document.addEventListener('DOMContentLoaded', () => {
   App.load();
   App.renderProjectList();
+  App.renderView();
   document.getElementById('addProjectBtn').onclick = () => App.addProject();
   document.querySelectorAll('.view-btn').forEach(btn => {
     btn.onclick = () => { App.currentView = btn.dataset.view; App.renderView(); };
@@ -326,3 +347,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.addEventListener('dragend', () => { App.draggedTask = null; });
 });
+
+export { App };

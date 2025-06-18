@@ -3,3 +3,17 @@ body {
   font-family: 'Inter', sans-serif;
   background: #f9fafb;
 }
+
+.select-none {
+  user-select: none;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.highlight-drop-target {
+  background-color: rgba(59, 130, 246, 0.2);
+  border: 2px dashed #3b82f6;
+  transition: all 0.2s ease;
+}
