@@ -384,8 +384,8 @@ const App = {
       this.currentProject.tasks.push(task);
     }
     this.save();
-    this.renderView();
     this.closeTaskModal();
+    this.renderView();
   },
   showContextMenu(e, task) {
     e.preventDefault();
@@ -400,7 +400,7 @@ const App = {
   },
   removeTask(task) {
     if (!task || !this.currentProject) return;
-    this.currentProject.tasks = this.currentProject.tasks.filter(t => t !== task);
+    this.currentProject.tasks = this.currentProject.tasks.filter(t => t.id !== task.id);
     this.save();
   },
   deleteTask() {
@@ -469,22 +469,16 @@ const App = {
     this.draggedTask = task;
   },
   dropKanban(status) {
-    if (!this.draggedTask || !this.currentProject) {
-      console.log('❌ Drag fallido');
-      return;
-    }
-    const idx = this.currentProject.tasks.findIndex(t => t.id === this.draggedTask.id);
-    if (idx !== -1) {
-      this.currentProject.tasks[idx].status = status;
-      const [t] = this.currentProject.tasks.splice(idx, 1);
-      this.currentProject.tasks.push(t);
-      this.save();
-      this.renderView();
-      console.log(`✅ Drag exitoso a ${status}`);
-    } else {
-      console.log('❌ Drag fallido');
-    }
+    if (!this.draggedTask || !this.currentProject) return;
+    const arr = this.currentProject.tasks;
+    const from = arr.findIndex(t => t.id === this.draggedTask.id);
+    if (from === -1) { this.draggedTask = null; return; }
+    arr[from].status = status;
+    const [task] = arr.splice(from, 1);
+    arr.push(task);
     this.draggedTask = null;
+    this.save();
+    this.renderView();
   },
   dropList(index) {
     if (!this.draggedTask || !this.currentProject) return;
