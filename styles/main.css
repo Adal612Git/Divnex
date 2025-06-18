@@ -1,14 +1,6 @@
-:root {
-  --bg: #f9fafb;
-  --fg: #111827;
-  --accent: #6366f1;
-  --accent-bg: rgba(99,102,241,0.2);
-  --card-bg: #ffffff;
-  --border-color: #e5e7eb;
-}
-
 body {
   margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-family: 'Inter', 'Segoe UI', 'system-ui', sans-serif;
   background: var(--bg);
   color: var(--fg);
@@ -22,20 +14,21 @@ body {
 .pointer-events-none {
   pointer-events: none;
 }
-
+.select-none { user-select: none; }
+.pointer-events-none { pointer-events: none; }
 .highlight-drop-target {
-  background-color: var(--accent-bg);
-  border: 2px dashed var(--accent);
+  background-color: rgba(99,102,241,0.2);
+  border: 2px dashed #6366f1;
   transition: background-color 0.2s, border-color 0.2s;
 }
 
 
 .kanban-column {
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 16px;
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1rem;
 }
-
-.bg-indigo-100 {
-  background-color: rgba(199, 210, 254, 1);
+.dark .kanban-column {
+  background-color: #1f2937;
 }
+.bg-indigo-100 { background-color: rgba(199,210,254,1); }

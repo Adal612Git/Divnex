@@ -1,4 +1,7 @@
-@@ -6,25 +6,33 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
+@@ -3,28 +3,31 @@
+Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Monday. Todo corre directamente en el navegador sin necesidad de backend ni bases de datos externas.
+
+## Uso
 
 1. Clona este repositorio o descarga los archivos.
 2. Abre `index.html` en tu navegador preferido.
@@ -24,11 +27,8 @@ La aplicación incluye datos de ejemplo la primera vez que se abre para mostrar 
 ## Temas
 
 Puedes cambiar entre el tema claro y uno inspirado en VS Code desde el menú superior. El ajuste se guarda en `localStorage`.
+## Estilo y temas
 
-## Estilo y personalización
+Divnex utiliza Tailwind CSS para todas las vistas. Puedes personalizar colores y componentes desde `styles/components.css` y ajustar la configuración en `tailwind.config.js`.
 
-Divnex utiliza **Tailwind CSS**. Los estilos comunes se definen en `styles/components.css` y el archivo `tailwind.config.js` habilita el modo oscuro por clase.
-
-- Para modificar colores o fuentes edita `tailwind.config.js`.
-- Puedes agregar más botones reutilizando las clases `btn`, `btn-primary`, `btn-outline` o `btn-danger`.
-- El modo claro/oscuro se cambia con el botón de sol/luna en el encabezado y se recuerda usando `localStorage`.
+El botón con ícono de sol/luna en el encabezado permite alternar entre modo claro y oscuro. La elección se guarda automáticamente en `localStorage`.

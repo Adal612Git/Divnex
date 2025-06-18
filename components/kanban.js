@@ -32,7 +32,7 @@ export function createTaskCard(task, handlers = {}) {
   title.textContent = task.title;
   card.appendChild(title);
   const info = document.createElement('div');
-  info.className = 'flex justify-between items-center mt-2 text-xs text-gray-500';
+  info.className = 'flex justify-between items-center mt-2 text-xs text-gray-500 dark:text-gray-400';
   const left = document.createElement('div');
   if (task.dueDate) {
     const due = document.createElement('span');
