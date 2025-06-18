@@ -1,7 +1,7 @@
 import { createKanbanColumn, createTaskCard } from "./components/kanban.js";
 import { createTaskRow } from "./components/task.js";
 class Task {
-  constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1, color = '', dueDate = '', attachments = [], subtasks = [] }) {
+  constructor({ id, title, description = '', status = 'To Do', priority = 'Media', type = 'General', estimate = 1, color = '', dueDate = '', attachments = [], subtasks = [], notes = [], header = {} }) {
     this.id = id || Date.now();
     this.title = title;
     this.description = description;
@@ -13,6 +13,13 @@ class Task {
     this.dueDate = dueDate;
     this.attachments = attachments;
     this.subtasks = subtasks.map(s => ({ id: s.id || Date.now(), title: s.title, done: !!s.done }));
+    this.notes = notes.map(n => ({
+      id: n.id || Date.now(),
+      text: n.text || '',
+      time: n.time || new Date().toISOString(),
+      images: n.images || []
+    }));
+    this.header = header; // {color, image}
   }
   toJSON() {
     return {
@@ -26,7 +33,9 @@ class Task {
       color: this.color,
       dueDate: this.dueDate,
       attachments: this.attachments,
-      subtasks: this.subtasks
+      subtasks: this.subtasks,
+      notes: this.notes,
+      header: this.header
     };
   }
   static fromJSON(obj) {
@@ -56,6 +65,7 @@ const App = {
   modalTask: null,
   modalSubtasks: [],
   modalAttachments: [],
+  modalNotes: [],
   draggedTask: null,
   calendarMonth: new Date(),
   load() {
@@ -270,16 +280,31 @@ const App = {
     document.getElementById('taskStatus').value = task ? task.status : 'To Do';
     document.getElementById('taskDueDate').value = task ? (task.dueDate || '') : '';
     document.getElementById('taskColor').value = task && task.color ? task.color : '#94a3b8';
+    document.getElementById('taskDescription').value = task ? task.description : '';
+    const header = task && task.header ? task.header : {};
+    document.getElementById('headerColor').value = header.color || '#e5e7eb';
+    const preview = document.getElementById('headerPreview');
+    preview.style.backgroundColor = header.color || '#e5e7eb';
+    if (header.image) {
+      preview.style.backgroundImage = `url(${header.image})`;
+      preview.dataset.image = header.image;
+    } else {
+      preview.style.backgroundImage = 'none';
+      preview.dataset.image = '';
+    }
     this.modalSubtasks = task ? task.subtasks.map(s => ({ ...s })) : [];
     this.modalAttachments = task ? task.attachments.slice() : [];
+    this.modalNotes = task ? task.notes.map(n => ({ ...n })) : [];
     document.getElementById('taskAttachments').value = '';
     this.renderSubtasks();
+    this.renderNotes();
     document.getElementById('taskModal').classList.remove('hidden');
   },
   closeTaskModal() {
     document.getElementById('taskModal').classList.add('hidden');
     this.modalTask = null;
     this.modalAttachments = [];
+    this.modalNotes = [];
   },
   renderSubtasks() {
     const list = document.getElementById('subtaskList');
@@ -304,22 +329,58 @@ const App = {
       list.appendChild(li);
     });
   },
+  renderNotes() {
+    const list = document.getElementById('noteList');
+    list.innerHTML = '';
+    this.modalNotes.forEach(n => {
+      const li = document.createElement('li');
+      li.className = 'bg-white p-2 rounded text-sm space-y-1';
+      const text = document.createElement('div');
+      text.textContent = n.text;
+      const time = document.createElement('div');
+      time.className = 'text-xs text-gray-500';
+      time.textContent = new Date(n.time).toLocaleString();
+      li.appendChild(text);
+      if (n.images && n.images.length) {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'flex gap-1 flex-wrap';
+        n.images.forEach(img => {
+          const i = document.createElement('img');
+          i.src = img.data;
+          i.alt = img.name;
+          i.className = 'w-12 h-12 object-cover rounded';
+          imgContainer.appendChild(i);
+        });
+        li.appendChild(imgContainer);
+      }
+      li.appendChild(time);
+      list.appendChild(li);
+    });
+  },
   saveTaskFromModal() {
     const title = document.getElementById('taskTitle').value.trim();
     if (!title) return;
     const status = document.getElementById('taskStatus').value;
     const dueDate = document.getElementById('taskDueDate').value;
     const color = document.getElementById('taskColor').value;
+    const description = document.getElementById('taskDescription').value;
+    const header = {
+      color: document.getElementById('headerColor').value,
+      image: document.getElementById('headerPreview').dataset.image || ''
+    };
     const attachments = this.modalAttachments;
     if (this.modalTask) {
       this.modalTask.title = title;
       this.modalTask.status = status;
       this.modalTask.dueDate = dueDate;
       this.modalTask.color = color;
+      this.modalTask.description = description;
+      this.modalTask.header = header;
       this.modalTask.subtasks = this.modalSubtasks;
       this.modalTask.attachments = attachments;
+      this.modalTask.notes = this.modalNotes;
     } else {
-      const task = new Task({ title, status, color, dueDate, attachments, subtasks: this.modalSubtasks });
+      const task = new Task({ title, status, color, dueDate, description, attachments, subtasks: this.modalSubtasks, notes: this.modalNotes, header });
       this.currentProject.tasks.push(task);
     }
     this.save();
@@ -468,6 +529,49 @@ document.addEventListener('DOMContentLoaded', () => {
       input.value = '';
       App.renderSubtasks();
     }
+  };
+  document.getElementById('addNoteBtn').onclick = () => {
+    const text = document.getElementById('noteText').value.trim();
+    const files = Array.from(document.getElementById('noteImages').files);
+    const note = { id: Date.now(), text, time: new Date().toISOString(), images: [] };
+    if (files.length) {
+      let remaining = files.length;
+      files.forEach(f => {
+        const r = new FileReader();
+        r.onload = ev => {
+          note.images.push({ name: f.name, data: ev.target.result });
+          remaining--;
+          if (remaining === 0) finishNote();
+        };
+        r.readAsDataURL(f);
+      });
+    } else {
+      finishNote();
+    }
+    function finishNote() {
+      App.modalNotes.push(note);
+      document.getElementById('noteText').value = '';
+      document.getElementById('noteImages').value = '';
+      App.renderNotes();
+    }
+  };
+  document.getElementById('noteImages').onchange = () => {}; // just to reset input after adding
+  document.getElementById('headerColor').oninput = e => {
+    const val = e.target.value;
+    const prev = document.getElementById('headerPreview');
+    prev.style.backgroundColor = val;
+    prev.dataset.image = prev.dataset.image || '';
+  };
+  document.getElementById('headerImage').onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const prev = document.getElementById('headerPreview');
+      prev.style.backgroundImage = `url(${ev.target.result})`;
+      prev.dataset.image = ev.target.result;
+    };
+    reader.readAsDataURL(file);
   };
   document.getElementById('taskAttachments').onchange = e => {
     const files = Array.from(e.target.files);

@@ -45,29 +45,45 @@
     <button id="deleteTask" class="block w-full text-left px-4 py-1 hover:bg-gray-100">Eliminar</button>
   </div>
   <div id="taskModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
-    <div class="bg-white rounded-lg p-4 w-80 space-y-2">
-      <h3 id="taskModalTitle" class="text-lg font-semibold">Nueva Tarea</h3>
-      <input id="taskTitle" type="text" class="w-full border rounded p-2" placeholder="Título" />
-      <select id="taskStatus" class="w-full border rounded p-2">
-        <option value="To Do">To Do</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Done">Done</option>
-      </select>
-      <input id="taskDueDate" type="datetime-local" class="w-full border rounded p-2" />
-      <label class="block text-sm">Color
-        <input id="taskColor" type="color" class="ml-2" />
-      </label>
-      <label class="block text-sm">Adjuntos
-        <input id="taskAttachments" type="file" multiple class="w-full border rounded p-2 mt-1" />
-      </label>
-      <div>
-        <div class="flex mb-1">
-          <input id="subtaskInput" type="text" class="flex-1 border rounded-l p-2" placeholder="Subtarea" />
-          <button id="addSubtaskBtn" class="border rounded-r px-2 bg-gray-100">+</button>
-        </div>
-        <ul id="subtaskList" class="space-y-1 max-h-32 overflow-y-auto"></ul>
+    <div class="bg-gray-100 rounded-lg w-[800px]">
+      <div id="headerPreview" class="h-24 rounded-t-lg bg-gray-200 bg-cover bg-center relative">
+        <input id="headerColor" type="color" class="absolute bottom-2 left-2" />
+        <input id="headerImage" type="file" accept="image/*" class="absolute bottom-2 left-20" />
       </div>
-      <div class="flex justify-end space-x-2 pt-2">
+      <div class="p-4 flex space-x-4">
+        <div class="flex-1 space-y-2">
+          <h3 id="taskModalTitle" class="text-lg font-semibold">Nueva Tarea</h3>
+          <input id="taskTitle" type="text" class="w-full border rounded p-2" placeholder="Título" />
+          <textarea id="taskDescription" class="w-full border rounded p-2" rows="3" placeholder="Descripción"></textarea>
+          <select id="taskStatus" class="w-full border rounded p-2">
+            <option value="To Do">To Do</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Done">Done</option>
+          </select>
+          <input id="taskDueDate" type="datetime-local" class="w-full border rounded p-2" />
+          <label class="block text-sm">Color
+            <input id="taskColor" type="color" class="ml-2" />
+          </label>
+          <label class="block text-sm">Adjuntos
+            <input id="taskAttachments" type="file" multiple class="w-full border rounded p-2 mt-1" />
+          </label>
+          <div>
+            <div class="flex mb-1">
+              <input id="subtaskInput" type="text" class="flex-1 border rounded-l p-2" placeholder="Subtarea" />
+              <button id="addSubtaskBtn" class="border rounded-r px-2 bg-gray-100">+</button>
+            </div>
+            <ul id="subtaskList" class="space-y-1 max-h-32 overflow-y-auto"></ul>
+          </div>
+        </div>
+        <div class="w-64 space-y-2">
+          <h4 class="font-semibold">Notas</h4>
+          <textarea id="noteText" class="w-full border rounded p-1" rows="3" placeholder="Escribe una nota"></textarea>
+          <input id="noteImages" type="file" accept="image/*" multiple class="w-full border rounded p-1" />
+          <button id="addNoteBtn" class="px-2 py-1 bg-indigo-500 text-white rounded w-full">Agregar Nota</button>
+          <ul id="noteList" class="space-y-1 max-h-40 overflow-y-auto"></ul>
+        </div>
+      </div>
+      <div class="p-4 flex justify-end space-x-2 border-t bg-gray-100 rounded-b-lg">
         <button id="cancelTaskBtn" class="px-3 py-1 rounded bg-gray-200">Cancelar</button>
         <button id="saveTaskBtn" class="px-3 py-1 rounded bg-indigo-500 text-white">Guardar</button>
       </div>
