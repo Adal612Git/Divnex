@@ -2,7 +2,7 @@ import { statusColor } from './kanban.js';
 
 export function createTaskRow(task, handlers = {}) {
   const row = document.createElement('div');
-  row.className = 'bg-white rounded-md shadow p-3 mb-2 flex justify-between items-center text-sm cursor-pointer';
+  row.className = 'bg-white rounded-md shadow p-3 mb-2 flex justify-between items-center text-sm cursor-pointer select-none';
   row.draggable = true;
   row.dataset.id = task.id;
   row.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;

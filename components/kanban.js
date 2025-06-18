@@ -24,7 +24,7 @@ export function createKanbanColumn(title) {
 
 export function createTaskCard(task, handlers = {}) {
   const card = document.createElement('div');
-  card.className = 'bg-white rounded-lg shadow p-3 text-sm cursor-pointer';
+  card.className = 'bg-white rounded-lg shadow p-3 text-sm cursor-pointer select-none';
   card.draggable = true;
   card.dataset.id = task.id;
   card.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;
