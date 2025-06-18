@@ -8,6 +8,7 @@ Divnex es una WebApp local para gestión de proyectos inspirada en ClickUp y Mon
 2. Abre `index.html` en tu navegador preferido.
 3. La aplicación guardará los datos en `localStorage` de forma automática.
 4. Puedes exportar o importar un archivo JSON como respaldo.
+5. Cada proyecto puede renombrarse o eliminarse desde la barra lateral y las tareas incluyen un botón para borrarlas.
 
 ## Estructura
 

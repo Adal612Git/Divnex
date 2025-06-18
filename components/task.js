@@ -2,7 +2,7 @@ import { statusColor } from './kanban.js';
 
 export function createTaskRow(task, handlers = {}) {
   const row = document.createElement('div');
-  row.className = 'bg-white rounded-md shadow p-3 mb-2 flex justify-between items-center text-sm cursor-pointer select-none';
+  row.className = 'relative bg-white rounded-md shadow p-3 mb-2 flex justify-between items-center text-sm cursor-pointer select-none';
   row.draggable = true;
   row.dataset.id = task.id;
   row.style.borderLeft = `4px solid ${task.color || statusColor(task.status)}`;
@@ -23,5 +23,12 @@ export function createTaskRow(task, handlers = {}) {
   if (handlers.onDragStart) row.addEventListener('dragstart', e => handlers.onDragStart(e, task));
   if (handlers.onDrop) row.addEventListener('drop', e => handlers.onDrop(e, task));
   if (handlers.onDragOver) row.addEventListener('dragover', e => handlers.onDragOver(e, task));
+  if (handlers.onDelete) {
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.className = 'absolute top-1 right-1 text-red-500';
+    del.onclick = e => { e.stopPropagation(); handlers.onDelete(task); };
+    row.appendChild(del);
+  }
   return row;
 }
