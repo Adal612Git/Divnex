@@ -11,7 +11,7 @@ export function statusColor(status) {
 
 export function createKanbanColumn(title) {
   const column = document.createElement('div');
-  column.className = 'kanban-column flex-1 mr-4 last:mr-0';
+  column.className = 'kanban-column flex-1 mr-4 last:mr-0 bg-white dark:bg-gray-800 p-4 rounded-xl shadow';
   const header = document.createElement('h3');
   header.className = 'font-semibold mb-2';
   header.textContent = title;
