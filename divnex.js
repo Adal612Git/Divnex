@@ -44,13 +44,19 @@ class Task {
 }
 
 class Project {
-  constructor({ id, name, tasks = [] }) {
+  constructor({ id, name, tasks = [], status = '' }) {
     this.id = id || Date.now();
     this.name = name;
     this.tasks = tasks.map(t => Task.fromJSON(t));
+    this.status = status;
   }
   toJSON() {
-    return { id: this.id, name: this.name, tasks: this.tasks.map(t => t.toJSON()) };
+    return {
+      id: this.id,
+      name: this.name,
+      tasks: this.tasks.map(t => t.toJSON()),
+      status: this.status
+    };
   }
   static fromJSON(obj) {
     return new Project(obj);
@@ -77,6 +83,7 @@ const App = {
       this.data.projects = [
         new Project({
           name: 'Proyecto Demo',
+          status: '',
           tasks: [
             new Task({ title: 'Tarea de ejemplo', status: 'To Do' }),
             new Task({ title: 'Otra tarea', status: 'In Progress' })
@@ -104,6 +111,27 @@ const App = {
       };
       const span = document.createElement('span');
       span.textContent = p.name;
+
+      const statusWrap = document.createElement('div');
+      statusWrap.className = 'flex ml-2';
+      [
+        { value: 'stop', color: 'red' },
+        { value: 'go', color: 'green' },
+        { value: 'done', color: 'blue' }
+      ].forEach(info => {
+        const b = document.createElement('button');
+        b.className = 'w-3 h-3 rounded-full border ml-1';
+        b.style.borderColor = info.color;
+        if (p.status === info.value) b.style.backgroundColor = info.color;
+        b.onclick = e => {
+          e.stopPropagation();
+          p.status = p.status === info.value ? '' : info.value;
+          this.save();
+          this.renderProjectList();
+          if (this.currentProject === p) this.renderView();
+        };
+        statusWrap.appendChild(b);
+      });
       const actions = document.createElement('div');
       const edit = document.createElement('button');
       edit.textContent = '✎';
@@ -116,6 +144,7 @@ const App = {
       actions.appendChild(edit);
       actions.appendChild(del);
       li.appendChild(span);
+      li.appendChild(statusWrap);
       li.appendChild(actions);
       list.appendChild(li);
     });
@@ -129,6 +158,27 @@ const App = {
     const title = document.createElement('h2');
     title.className = 'text-xl font-semibold';
     title.textContent = this.currentProject.name;
+    const statusWrap = document.createElement('div');
+    statusWrap.className = 'flex ml-2';
+    [
+      { value: 'stop', color: 'red' },
+      { value: 'go', color: 'green' },
+      { value: 'done', color: 'blue' }
+    ].forEach(info => {
+      const b = document.createElement('button');
+      b.className = 'w-4 h-4 rounded-full border ml-1';
+      b.style.borderColor = info.color;
+      if (this.currentProject.status === info.value) b.style.backgroundColor = info.color;
+      b.onclick = e => {
+        e.stopPropagation();
+        this.currentProject.status = this.currentProject.status === info.value ? '' : info.value;
+        this.save();
+        this.renderProjectList();
+        this.renderView();
+      };
+      statusWrap.appendChild(b);
+    });
+
     const actions = document.createElement('div');
     const edit = document.createElement('button');
     edit.textContent = '✎';
@@ -141,6 +191,7 @@ const App = {
     actions.appendChild(edit);
     actions.appendChild(del);
     header.appendChild(title);
+    header.appendChild(statusWrap);
     header.appendChild(actions);
     main.appendChild(header);
 
@@ -384,8 +435,8 @@ const App = {
       this.currentProject.tasks.push(task);
     }
     this.save();
-    this.renderView();
     this.closeTaskModal();
+    this.renderView();
   },
   showContextMenu(e, task) {
     e.preventDefault();
@@ -400,7 +451,7 @@ const App = {
   },
   removeTask(task) {
     if (!task || !this.currentProject) return;
-    this.currentProject.tasks = this.currentProject.tasks.filter(t => t !== task);
+    this.currentProject.tasks = this.currentProject.tasks.filter(t => t.id !== task.id);
     this.save();
   },
   deleteTask() {
@@ -469,22 +520,16 @@ const App = {
     this.draggedTask = task;
   },
   dropKanban(status) {
-    if (!this.draggedTask || !this.currentProject) {
-      console.log('❌ Drag fallido');
-      return;
-    }
-    const idx = this.currentProject.tasks.findIndex(t => t.id === this.draggedTask.id);
-    if (idx !== -1) {
-      this.currentProject.tasks[idx].status = status;
-      const [t] = this.currentProject.tasks.splice(idx, 1);
-      this.currentProject.tasks.push(t);
-      this.save();
-      this.renderView();
-      console.log(`✅ Drag exitoso a ${status}`);
-    } else {
-      console.log('❌ Drag fallido');
-    }
+    if (!this.draggedTask || !this.currentProject) return;
+    const arr = this.currentProject.tasks;
+    const from = arr.findIndex(t => t.id === this.draggedTask.id);
+    if (from === -1) { this.draggedTask = null; return; }
+    arr[from].status = status;
+    const [task] = arr.splice(from, 1);
+    arr.push(task);
     this.draggedTask = null;
+    this.save();
+    this.renderView();
   },
   dropList(index) {
     if (!this.draggedTask || !this.currentProject) return;
